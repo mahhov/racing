@@ -7,6 +7,8 @@ class Particle extends GameEntity {
 
 	constructor(position, velocity, duration, size, color) {
 		super(Particle.createMesh(size, color));
+		this.mesh.position.copy(position);
+		this.#duration = duration;
 		this.#velocity = velocity;
 	}
 
@@ -17,7 +19,8 @@ class Particle extends GameEntity {
 	}
 
 	update() {
-		if (!this.#duration--) return true;
+		if (!this.#duration--)
+			return true;
 		this.mesh.position.add(this.#velocity);
 	}
 

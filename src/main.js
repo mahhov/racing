@@ -21,7 +21,7 @@ scene.add(ambientLight);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 class Loop {
-	#game = new Game(scene, camera);
+	#game = new Game(scene, camera, false);
 	#input = new Input();
 	#paintDirty = false;
 
@@ -38,7 +38,7 @@ class Loop {
 			let now = Date.now();
 			if (now - lastUpdate > 1000 / 60) {
 				lastUpdate = now;
-				this.#game.update(scene, this.#input);
+				this.#game.update(this.#input);
 				this.#paintDirty = true;
 				updatesPerSecond.add();
 			}

@@ -8,8 +8,8 @@ class SmoothCamera {
 	}
 
 	follow(position) {
-		const DISTANCE = 10;
-		const HEIGHT = 5;
+		const DISTANCE = 25;
+		const HEIGHT = 15;
 
 		let delta = position.clone().sub(this.#camera.position);
 		delta.y = 0;

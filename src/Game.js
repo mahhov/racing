@@ -4,28 +4,33 @@ import SmoothCamera from './SmoothCamera.js';
 import Track from './Track.js';
 
 class Game {
+	#scene;
 	#playerCar;
 	#track;
 	#camera;
 	#particles = [];
 
-	constructor(scene, camera) {
+	constructor(scene, camera, fixedCamera) {
+		this.#scene = scene;
 		this.#playerCar = new Car();
-		scene.add(this.#playerCar.mesh);
+		this.#scene.add(this.#playerCar.mesh);
 		this.#track = new Track();
-		scene.add(this.#track.mesh);
-		this.#camera = new FixedCamera(camera);
+		this.#scene.add(this.#track.mesh);
+		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
 	}
 
 	addParticle(particle) {
 		this.#particles.push(particle);
+		this.#scene.add(particle.mesh);
 	}
 
-	update(scene, input) {
+	update(input) {
 		this.#playerCar.update(this, input);
 		this.#particles = this.#particles.filter(particle => {
 			if (particle.update())
-				scene.remove(particle.mesh);
+				this.#scene.remove(particle.mesh);
+			else
+				return true;
 		});
 	}
 

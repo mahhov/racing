@@ -4,10 +4,12 @@ import {cube} from './GeometryCreator.js';
 import Particle from './Particle.js';
 
 const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+const rand = max => Math.random() * max;
+const radian = degree => degree / 180 * Math.PI;
 
 const FRICTION = .03;
 const ACCELERATION = .1;
-const TURN = 1 / 90 * Math.PI;
+const TURN = radian(2);
 
 class Car extends GameEntity {
 	#position = new THREE.Vector3();
@@ -41,23 +43,28 @@ class Car extends GameEntity {
 		if (brake)
 			turnSpeed *= 1.5;
 
+		const UP = new THREE.Vector3(0, 1, 0);
+		this.#direction.applyAxisAngle(UP, -turnSpeed * right);
+
 		let decelerate = 1 - FRICTION - (brake ? .05 : 0);
-
-		if (forward)
-			this.#velocity.addScaledVector(this.#direction, ACCELERATION * forward);
-		if (right)
-			this.#direction = this.#direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), -turnSpeed * right);
-
+		this.#velocity
+			.addScaledVector(this.#direction, ACCELERATION * forward)
+			.addScaledVector(this.#direction, this.#velocity.length() * (1 - decelerate) / 2)
+			.multiplyScalar(decelerate);
 		this.#position.add(this.#velocity);
-		this.#velocity.multiplyScalar(decelerate);
 
-		game.addParticle(new Particle(this.#position.clone(), new THREE.Vector3(0, 0, 0), 100, .1, 0x00ff00));
+		let particleCount = (brake ? Math.floor(this.#velocity.length()) : 0) + (forward ? 3 : 0) + (this.#velocity.length() > .1 ? 1 : 0);
+		for (let i = 0; i < particleCount; i++)
+			game.addParticle(new Particle(
+				this.#position.clone()
+					.addScaledVector(this.#direction, rand(1) - 3.5)
+					.addScaledVector(this.#direction.clone().applyAxisAngle(UP, radian(90)), rand(3) - 1.5),
+				new THREE.Vector3(rand(.02) - .01, rand(.02) - .01, rand(.02) - .01), 100, .4, 0x003300));
 	}
 
 	paint() {
 		this.mesh.position.copy(this.#position);
 		this.mesh.lookAt(this.#position.clone().add(this.#direction));
-		// this.mesh.lookAt(this.#position.clone().add(this.#velocity));
 	}
 
 	get position() {
