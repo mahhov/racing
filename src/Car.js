@@ -1,6 +1,7 @@
+import {Group} from 'three';
 import * as THREE from 'three';
 import GameEntity from './GameEntity.js';
-import {cube} from './GeometryCreator.js';
+import {cube, trapezoid, meshFromVectors} from './GeometryCreator.js';
 import Particle from './Particle.js';
 
 const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -15,21 +16,32 @@ class Car extends GameEntity {
 	#position = new THREE.Vector3();
 	#velocity = new THREE.Vector3();
 	#direction = new THREE.Vector3(0, 0, 1);
+	#wheelDirection = new THREE.Vector3(0, 0, 1);
 
 	constructor() {
 		super(Car.createMesh());
 	}
 
 	static createMesh() {
-		const vertices = new Float32Array([
-			...cube([-1.5, 0, -2.5], 3, 5, [-1, 1.25, -2], 2, 3),
-		]);
-		const geometry = new THREE.BufferGeometry();
-		geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-		geometry.scale(-1, 1, 1);
-		geometry.computeVertexNormals();
+		const WIDTH_HALF = 1.5, LENGTH_HALF = 2.5;
+		const TIRE_THICKNESS = .5, TIRE_WIDTH = 1;
 		let material = new THREE.MeshPhongMaterial({color: 0x00ff00});
-		return new THREE.Mesh(geometry, material);
+		let group = new THREE.Group();
+		let bodyMesh = meshFromVectors(trapezoid([-WIDTH_HALF, .5, -LENGTH_HALF], 3, 5, [-1, 1.75, -2], 2, 3), material);
+		group.add(bodyMesh);
+		let backLeftTireMesh = meshFromVectors(cube([-TIRE_THICKNESS / 2, 0, -TIRE_WIDTH / 2], TIRE_THICKNESS, TIRE_WIDTH, TIRE_WIDTH), material);
+		backLeftTireMesh.position.copy(new THREE.Vector3(-WIDTH_HALF, 0, -LENGTH_HALF));
+		group.add(backLeftTireMesh);
+		let backRightTireMesh = backLeftTireMesh.clone();
+		backRightTireMesh.position.copy(new THREE.Vector3(WIDTH_HALF, 0, -LENGTH_HALF));
+		group.add(backRightTireMesh);
+		let frontLeftTireMesh = backLeftTireMesh.clone();
+		frontLeftTireMesh.position.copy(new THREE.Vector3(-WIDTH_HALF, 0, LENGTH_HALF - .5));
+		group.add(frontLeftTireMesh);
+		let frontRightTireMesh = backLeftTireMesh.clone();
+		frontRightTireMesh.position.copy(new THREE.Vector3(WIDTH_HALF, 0, LENGTH_HALF - .5));
+		group.add(frontRightTireMesh);
+		return group;
 	}
 
 	update(game, input) {
@@ -42,6 +54,8 @@ class Car extends GameEntity {
 			right *= -1;
 		if (brake)
 			turnSpeed *= 1.5;
+
+		this.#wheelDirection = -radian(15) * right;
 
 		const UP = new THREE.Vector3(0, 1, 0);
 		this.#direction.applyAxisAngle(UP, -turnSpeed * right);
@@ -65,6 +79,9 @@ class Car extends GameEntity {
 	paint() {
 		this.mesh.position.copy(this.#position);
 		this.mesh.lookAt(this.#position.clone().add(this.#direction));
+
+		this.mesh.children[3].rotation.y = this.#wheelDirection;
+		this.mesh.children[4].rotation.y = this.#wheelDirection;
 	}
 
 	get position() {
