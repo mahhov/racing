@@ -1,7 +1,6 @@
-import {Group} from 'three';
 import * as THREE from 'three';
 import GameEntity from './GameEntity.js';
-import {cube, trapezoid, meshFromVectors} from './GeometryCreator.js';
+import {TrapezoidParams, cube, trapezoid, meshFromVectors} from './GeometryCreator.js';
 import Particle from './Particle.js';
 
 const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -27,7 +26,10 @@ class Car extends GameEntity {
 		const TIRE_THICKNESS = .5, TIRE_WIDTH = 1;
 		let material = new THREE.MeshPhongMaterial({color: 0x00ff00});
 		let group = new THREE.Group();
-		let bodyMesh = meshFromVectors(trapezoid([-WIDTH_HALF, .5, -LENGTH_HALF], 3, 5, [-1, 1.75, -2], 2, 3), material);
+		let bodyMesh = meshFromVectors(trapezoid(
+			new TrapezoidParams([-WIDTH_HALF, .5, -LENGTH_HALF], 3, 5),
+			new TrapezoidParams([-WIDTH_HALF, 1.25, -LENGTH_HALF], 3, 5),
+			new TrapezoidParams([-1, 1.75, -2], 2, 3)), material);
 		group.add(bodyMesh);
 		let backLeftTireMesh = meshFromVectors(cube([-TIRE_THICKNESS / 2, 0, -TIRE_WIDTH / 2], TIRE_THICKNESS, TIRE_WIDTH, TIRE_WIDTH), material);
 		backLeftTireMesh.position.copy(new THREE.Vector3(-WIDTH_HALF, 0, -LENGTH_HALF));

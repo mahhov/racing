@@ -1,36 +1,52 @@
 import * as THREE from 'three';
 
+class TrapezoidParams {
+	backLeft;
+	deltaX;
+	deltaZ;
+
+	constructor(backLeft, deltaX, deltaZ) {
+		this.backLeft = backLeft;
+		this.deltaX = [deltaX, 0, 0];
+		this.deltaZ = [0, 0, deltaZ];
+	}
+
+
+	get x() {
+		return sum(this.backLeft, this.deltaX);
+	}
+
+	get z() {
+		return sum(this.backLeft, this.deltaZ);
+	}
+
+	get xz() {
+		return sum(this.backLeft, this.deltaX, this.deltaZ);
+	}
+}
+
 const sum = (...vs) =>
 	vs[0].map((_, i) => vs.map(v => v[i]).reduce((a, b) => a + b, 0));
 
 const rect = (p1, p2, p3, p4) => [p1, p2, p3, p1, p3, p4].flat();
 
-const trapezoid = (b1, bdx, bdz, t1, tdx, tdz) => {
-	bdx = [bdx, 0, 0];
-	bdz = [0, 0, bdz];
-	tdx = [tdx, 0, 0];
-	tdz = [0, 0, tdz];
-
-	let bx = sum(b1, bdx);
-	let bz = sum(b1, bdz);
-	let bxz = sum(b1, bdx, bdz);
-
-	let tx = sum(t1, tdx);
-	let tz = sum(t1, tdz);
-	let txz = sum(t1, tdx, tdz);
-
-	return [
-		...rect(b1, bx, bxz, bz), // bottom
-		...rect(t1, tx, txz, tz), // top
-		...rect(b1, bx, tx, t1), // back
-		...rect(b1, t1, tz, bz), // left
-		...rect(bx, bxz, txz, tx), // right
-		...rect(bxz, bz, tz, txz), // front
-	];
+const trapezoid = (...trapezoidParams) => {
+	let rects = [];
+	trapezoidParams.forEach((param, i) => {
+		rects.push(rect(param.backLeft, param.x, param.xz, param.z));
+		if (i) {
+			let prevParam = trapezoidParams[i - 1];
+			rects.push(rect(prevParam.backLeft, prevParam.x, param.x, param.backLeft)); // back
+			rects.push(rect(prevParam.backLeft, param.backLeft, param.z, prevParam.z)); // left
+			rects.push(rect(prevParam.x, prevParam.xz, param.xz, param.x)); // right
+			rects.push(rect(prevParam.xz, prevParam.z, param.z, param.xz)); // front
+		}
+	});
+	return rects.flat();
 };
 
 const cube = (b1, w, h, l) =>
-	trapezoid(b1, w, l, sum(b1, [0, h, 0]), w, l);
+	trapezoid(new TrapezoidParams(b1, w, l), new TrapezoidParams(sum(b1, [0, h, 0]), w, l));
 
 const meshFromVectors = (vertices, material) => {
 	vertices = new Float32Array(vertices);
@@ -41,4 +57,4 @@ const meshFromVectors = (vertices, material) => {
 	return new THREE.Mesh(geometry, material);
 };
 
-export {trapezoid, cube, meshFromVectors};
+export {TrapezoidParams, trapezoid, cube, meshFromVectors};

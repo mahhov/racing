@@ -2,12 +2,23 @@ import * as THREE from 'three';
 import DynamicTexture from './DynamicTexture.js';
 import GameEntity from './GameEntity.js';
 
+let emptyArray = (n, valueFunc) => [...Array(100)].map(valueFunc);
+
 class Track extends GameEntity {
-	constructor() {
-		super(Track.createMesh());
+	#terrain = [];
+
+	constructor(terrain) {
+		super(Track.createMesh(terrain));
+		this.#terrain = terrain;
 	}
 
-	static createMesh() {
+	static Track1() {
+		let terrain = emptyArray(100, () => emptyArray(100, () => [0, false]));
+
+		return new Track(terrain);
+	}
+
+	static createMesh(terrain) {
 		let w = 100, n = 100;
 		let texture = new DynamicTexture(w, w);
 		texture.ctx.fillStyle = '#f00';

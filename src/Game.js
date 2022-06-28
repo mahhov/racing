@@ -14,9 +14,9 @@ class Game {
 		this.#scene = scene;
 		this.#playerCar = new Car();
 		this.#scene.add(this.#playerCar.mesh);
-		this.#track = new Track();
+		this.#track = Track.Track1();
 		this.#scene.add(this.#track.mesh);
-		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
+		this.#camera = true ? new FixedCamera(camera) : new SmoothCamera(camera);
 	}
 
 	addParticle(particle) {
