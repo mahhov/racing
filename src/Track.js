@@ -35,6 +35,27 @@ class Segment {
 	}
 }
 
+class SegmentCreator {
+	#segments = [];
+	#position;
+	#width;
+
+	moveTo(x, y, width = this.#width) {
+		this.#position = new THREE.Vector2(x, y);
+		this.#width = width;
+		return this;
+	}
+
+	pathTo(x, y, width = this.#width) {
+		this.#segments.push(new Segment(this.#position, new THREE.Vector2(x, y), this.#width, width));
+		return this.moveTo(x, y, width);
+	}
+
+	done() {
+		return this.#segments;
+	}
+}
+
 class Track extends GameEntity {
 	#segments;
 	startPosition;
@@ -46,20 +67,34 @@ class Track extends GameEntity {
 	}
 
 	static Track1() {
-		let segments = [
-			new Segment(new THREE.Vector2(0, 0), new THREE.Vector2(0, 450), 10, 10),
-		];
-		return new Track(1000, 1000, segments, new THREE.Vector3(10, 0, 0));
+		// let segments = [
+		// 	new Segment(new THREE.Vector2(0, 0), new THREE.Vector2(0, 450), 100, 100),
+		// ];
+
+		let segments = new SegmentCreator()
+			.moveTo(100, 100, 50)
+			.pathTo(100, 1200)
+			.pathTo(800, 1300)
+			.pathTo(1300, 1200)
+			.pathTo(800, 900)
+			.pathTo(300, 800)
+			.pathTo(300, 600)
+			.pathTo(800, 400)
+			.pathTo(600, 100)
+			.pathTo(100, 100)
+			.done();
+
+		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 100));
 	}
 
 	static createMesh(width, length, segments) {
-		let squareSize = 10;
+		let SQUARE_SIZE = 10;
 		let texture = new DynamicTexture(width, length);
 		texture.ctx.fillStyle = '#f00';
-		for (let x = 0; x < width / squareSize; x++)
-			for (let y = 0; y < length / squareSize; y++)
+		for (let x = 0; x < width / SQUARE_SIZE; x++)
+			for (let y = 0; y < length / SQUARE_SIZE; y++)
 				if ((x + y) % 2)
-					texture.ctx.fillRect(x * squareSize, y * squareSize, squareSize, squareSize);
+					texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
 
 		texture.ctx.fillStyle = '#00f';
 		segments.forEach(segment => {

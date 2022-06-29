@@ -15,7 +15,7 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 const light1 = new THREE.PointLight(0xffffff, 1, 0);
 light1.position.set(0, 30, 0);
 scene.add(light1);
-const ambientLight = new THREE.AmbientLight(0x404040);
+const ambientLight = new THREE.AmbientLight(0xAAAAAA);
 scene.add(ambientLight);
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
