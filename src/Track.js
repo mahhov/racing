@@ -1,37 +1,32 @@
 import * as THREE from 'three';
 import DynamicTexture from './DynamicTexture.js';
 import GameEntity from './GameEntity.js';
-import {radian, UP} from './util.js';
+import {radian} from './util.js';
 
 class Segment {
-	#p1;
-	#p2;
-	#w1;
-	#w2;
-	#dir90;
+	left1;
+	right1;
+	left2;
+	right2;
 
-	constructor(p1, p2, w1, w2) {
-		this.#p1 = p1;
-		this.#p2 = p2;
-		this.#w1 = w1;
-		this.#w2 = w2;
-		this.#dir90 = p2.clone().sub(p1).rotateAround(new THREE.Vector2(), radian(90)).normalize();
+	constructor(left1, right1, left2, right2) {
+		this.left1 = left1;
+		this.right1 = right1;
+		this.left2 = left2;
+		this.right2 = right2;
 	}
 
-	get left1() {
-		return this.#p1.clone().addScaledVector(this.#dir90, this.#w1).toArray();
+	static fromLine(p1, p2, w1, w2) {
+		let dir90 = p2.clone().sub(p1).rotateAround(new THREE.Vector2(), radian(90)).normalize();
+		let left1 = p1.clone().addScaledVector(dir90, w1).toArray();
+		let right1 = p1.clone().addScaledVector(dir90, -w1).toArray();
+		let left2 = p2.clone().addScaledVector(dir90, w2).toArray();
+		let right2 = p2.clone().addScaledVector(dir90, -w2).toArray();
+		return new Segment(left1, right1, left2, right2);
 	}
 
-	get right1() {
-		return this.#p1.clone().addScaledVector(this.#dir90, -this.#w1).toArray();
-	}
-
-	get left2() {
-		return this.#p2.clone().addScaledVector(this.#dir90, this.#w2).toArray();
-	}
-
-	get right2() {
-		return this.#p2.clone().addScaledVector(this.#dir90, -this.#w2).toArray();
+	static connectSegments(segment1, segment2) {
+		return new Segment(segment1.left2, segment1.right2, segment2.left1, segment2.right1);
 	}
 }
 
@@ -47,11 +42,18 @@ class SegmentCreator {
 	}
 
 	pathTo(x, y, width = this.#width) {
-		this.#segments.push(new Segment(this.#position, new THREE.Vector2(x, y), this.#width, width));
+		let newSegment = Segment.fromLine(this.#position, new THREE.Vector2(x, y), this.#width, width);
+		let lastSegment = this.#segments[this.#segments.length - 1];
+		if (lastSegment)
+			this.#segments.push(Segment.connectSegments(lastSegment, newSegment));
+		this.#segments.push(newSegment);
 		return this.moveTo(x, y, width);
 	}
 
 	done() {
+		let lastSegment = this.#segments[this.#segments.length - 1];
+		if (lastSegment)
+			this.#segments.push(Segment.connectSegments(lastSegment, this.#segments[0]));
 		return this.#segments;
 	}
 }
