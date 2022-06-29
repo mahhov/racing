@@ -17,11 +17,13 @@ class Segment {
 	}
 
 	static fromLine(p1, p2, w1, w2) {
-		let dir90 = p2.clone().sub(p1).rotateAround(new THREE.Vector2(), radian(90)).normalize();
-		let left1 = p1.clone().addScaledVector(dir90, w1).toArray();
-		let right1 = p1.clone().addScaledVector(dir90, -w1).toArray();
-		let left2 = p2.clone().addScaledVector(dir90, w2).toArray();
-		let right2 = p2.clone().addScaledVector(dir90, -w2).toArray();
+		const SMOOTHNESS = .3;
+		let dir = p2.clone().sub(p1).normalize();
+		let dir90 = dir.clone().rotateAround(new THREE.Vector2(), radian(90));
+		let left1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, w1).toArray();
+		let right1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, -w1).toArray();
+		let left2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, w2).toArray();
+		let right2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, -w2).toArray();
 		return new Segment(left1, right1, left2, right2);
 	}
 
@@ -69,10 +71,6 @@ class Track extends GameEntity {
 	}
 
 	static Track1() {
-		// let segments = [
-		// 	new Segment(new THREE.Vector2(0, 0), new THREE.Vector2(0, 450), 100, 100),
-		// ];
-
 		let segments = new SegmentCreator()
 			.moveTo(100, 100, 50)
 			.pathTo(100, 1200)
