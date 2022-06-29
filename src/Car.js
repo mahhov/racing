@@ -2,23 +2,21 @@ import * as THREE from 'three';
 import GameEntity from './GameEntity.js';
 import {TrapezoidParams, cube, trapezoid, meshFromVectors} from './GeometryCreator.js';
 import Particle from './Particle.js';
-
-const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
-const rand = max => Math.random() * max;
-const radian = degree => degree / 180 * Math.PI;
+import {clamp, radian, rand, UP} from './util.js';
 
 const FRICTION = .03;
 const ACCELERATION = .1;
 const TURN = radian(2);
 
 class Car extends GameEntity {
-	#position = new THREE.Vector3();
+	#position;
 	#velocity = new THREE.Vector3();
 	#direction = new THREE.Vector3(0, 0, 1);
 	#wheelDirection = new THREE.Vector3(0, 0, 1);
 
-	constructor() {
+	constructor(startPosition) {
 		super(Car.createMesh());
+		this.#position = startPosition;
 	}
 
 	static createMesh() {
@@ -59,7 +57,6 @@ class Car extends GameEntity {
 
 		this.#wheelDirection = -radian(15) * right;
 
-		const UP = new THREE.Vector3(0, 1, 0);
 		this.#direction.applyAxisAngle(UP, -turnSpeed * right);
 
 		let decelerate = 1 - FRICTION - (brake ? .05 : 0);

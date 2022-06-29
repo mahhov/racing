@@ -57,4 +57,9 @@ const meshFromVectors = (vertices, material) => {
 	return new THREE.Mesh(geometry, material);
 };
 
-export {TrapezoidParams, trapezoid, cube, meshFromVectors};
+export {
+	TrapezoidParams,
+	trapezoid,
+	cube,
+	meshFromVectors,
+};
