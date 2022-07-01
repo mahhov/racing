@@ -12,7 +12,7 @@ class Game {
 
 	constructor(scene, camera, fixedCamera) {
 		this.#scene = scene;
-		this.#track = Track.Track1();
+		this.#track = Track.TrackSquare();
 		this.#scene.add(this.#track.mesh);
 		this.#playerCar = new Car(this.#track.startPosition);
 		this.#scene.add(this.#playerCar.mesh);
