@@ -111,17 +111,23 @@ class Track extends GameEntity {
 					texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
 
 		texture.ctx.fillStyle = '#00f';
+		segments.forEach(segment => {
+			texture.ctx.beginPath();
+			texture.ctx.moveTo(...segment.left1.toArray());
+			texture.ctx.lineTo(...segment.right1.toArray());
+			texture.ctx.lineTo(...segment.right2.toArray());
+			texture.ctx.lineTo(...segment.left2.toArray());
+			texture.ctx.fill();
+		});
 		texture.ctx.strokeStyle = '#fff';
-		[true, false].forEach(fill =>
-			segments.forEach(segment => {
-				texture.ctx.beginPath();
-				texture.ctx.moveTo(...segment.left1.toArray());
-				texture.ctx.lineTo(...segment.right1.toArray());
-				texture.ctx.lineTo(...segment.right2.toArray());
-				texture.ctx.lineTo(...segment.left2.toArray());
-				texture.ctx.closePath();
-				fill ? texture.ctx.fill() : texture.ctx.stroke();
-			}));
+		segments.forEach(segment => {
+			texture.ctx.beginPath();
+			texture.ctx.moveTo(...segment.left1.toArray());
+			texture.ctx.lineTo(...segment.left2.toArray());
+			texture.ctx.moveTo(...segment.right1.toArray());
+			texture.ctx.lineTo(...segment.right2.toArray());
+			texture.ctx.stroke();
+		});
 
 		let geometry = new THREE.PlaneGeometry(width, length);
 		geometry.lookAt(new THREE.Vector3(0, 1, 0));
