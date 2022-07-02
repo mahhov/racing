@@ -1,6 +1,4 @@
 class GameEntity {
-	static #count = 0;
-	id = GameEntity.#count++;
 	mesh;
 
 	constructor(mesh) {

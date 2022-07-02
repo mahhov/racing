@@ -20,10 +20,10 @@ class Segment {
 		const SMOOTHNESS = .3;
 		let dir = p2.clone().sub(p1).normalize();
 		let dir90 = dir.clone().rotateAround(new THREE.Vector2(), radian(90));
-		let left1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, w1).toArray();
-		let right1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, -w1).toArray();
-		let left2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, w2).toArray();
-		let right2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, -w2).toArray();
+		let left1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, w1);
+		let right1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, -w1);
+		let left2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, w2);
+		let right2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, -w2);
 		return new Segment(left1, right1, left2, right2);
 	}
 
@@ -61,16 +61,16 @@ class SegmentCreator {
 }
 
 class Track extends GameEntity {
-	#segments;
+	segments;
 	startPosition;
 
 	constructor(width, length, segments, startPosition) {
 		super(Track.createMesh(width, length, segments));
-		this.#segments = segments;
+		this.segments = segments;
 		this.startPosition = startPosition;
 	}
 
-	static Track1() {
+	static track1() {
 		let segments = new SegmentCreator()
 			.moveTo(100, 100, 50)
 			.pathTo(100, 1200)
@@ -87,14 +87,14 @@ class Track extends GameEntity {
 		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 100));
 	}
 
-	static TrackSquare() {
+	static trackSquare() {
 		let right = Segment.fromLine(new THREE.Vector2(100, 200), new THREE.Vector2(100, 500), 50, 50);
 		let top = Segment.fromLine(new THREE.Vector2(200, 600), new THREE.Vector2(500, 600), 50, 50);
 		let left = Segment.fromLine(new THREE.Vector2(600, 500), new THREE.Vector2(600, 200), 50, 50);
 		let bottom = Segment.fromLine(new THREE.Vector2(500, 100), new THREE.Vector2(200, 100), 50, 50);
 		let segments = [right, top, left, bottom].flatMap((segment, i, segments) =>
 			[segment, Segment.connectSegments(segment, segments[i < segments.length - 1 ? i + 1 : 0])]);
-		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 100));
+		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 300));
 	}
 
 	static createMesh(width, length, segments) {
@@ -111,10 +111,10 @@ class Track extends GameEntity {
 		[true, false].forEach(fill =>
 			segments.forEach(segment => {
 				texture.ctx.beginPath();
-				texture.ctx.moveTo(...segment.left1);
-				texture.ctx.lineTo(...segment.right1);
-				texture.ctx.lineTo(...segment.right2);
-				texture.ctx.lineTo(...segment.left2);
+				texture.ctx.moveTo(...segment.left1.toArray());
+				texture.ctx.lineTo(...segment.right1.toArray());
+				texture.ctx.lineTo(...segment.right2.toArray());
+				texture.ctx.lineTo(...segment.left2.toArray());
 				texture.ctx.closePath();
 				fill ? texture.ctx.fill() : texture.ctx.stroke();
 			}));

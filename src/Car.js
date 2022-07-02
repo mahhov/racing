@@ -14,6 +14,8 @@ class Car extends GameEntity {
 	#direction = new THREE.Vector3(0, 0, 1);
 	#wheelDirection = new THREE.Vector3(0, 0, 1);
 
+	#trackSegmentIndex;
+
 	constructor(startPosition) {
 		super(Car.createMesh());
 		this.#position = startPosition;
@@ -44,7 +46,7 @@ class Car extends GameEntity {
 		return group;
 	}
 
-	update(game, input) {
+	update(game, intersectionManager, input) {
 		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1);
 
 		let forward = input.get('w') ? 1 : (input.get('s') ? -.5 : 0);
@@ -64,9 +66,20 @@ class Car extends GameEntity {
 			.addScaledVector(this.#direction, ACCELERATION * forward)
 			.addScaledVector(this.#direction, this.#velocity.length() * (1 - decelerate) / 2)
 			.multiplyScalar(decelerate);
-		this.#position.add(this.#velocity);
 
-		let particleCount = (brake ? Math.floor(this.#velocity.length()) : 0) + (forward ? 3 : 0) + (this.#velocity.length() > .1 ? 1 : 0);
+		let intersection = intersectionManager.canMove(this.#position, this.#velocity);
+		if (!intersection)
+			this.#position.add(this.#velocity);
+		else {
+			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
+			this.#velocity.sub(v1).multiplyScalar(-.2).add(v1);
+			this.#direction = intersection.direction.normalize();
+		}
+
+		let particleCount =
+			(brake ? Math.floor(this.#velocity.length()) : 0) +
+			(forward ? 3 : 0) +
+			(this.#velocity.length() > .1 ? 1 : 0);
 		for (let i = 0; i < particleCount; i++)
 			game.addParticle(new Particle(
 				this.#position.clone()
