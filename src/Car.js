@@ -57,7 +57,7 @@ class Car extends GameEntity {
 		if (brake)
 			turnSpeed *= 1.5;
 
-		this.#wheelDirection = -radian(15) * right;
+		this.#wheelDirection = -radian(30) * right;
 
 		this.#direction.applyAxisAngle(UP, -turnSpeed * right);
 
@@ -85,8 +85,9 @@ class Car extends GameEntity {
 			game.addParticle(new Particle(
 				this.#position.clone()
 					.addScaledVector(this.#direction, rand(1) - 3.5)
-					.addScaledVector(this.#direction.clone().applyAxisAngle(UP, radian(90)), rand(3) - 1.5),
-				new THREE.Vector3(rand(.02) - .01, rand(.02) - .01, rand(.02) - .01), 100, .4, 0x003300));
+					.addScaledVector(this.#direction.clone().applyAxisAngle(UP, radian(90)), rand(3) - 1.5)
+					.add(new THREE.Vector3(0, 1, 0)),
+				new THREE.Vector3(rand(.02) - .01, rand(.02) - .01, rand(.02) - .01), 100, .4, '#333'));
 	}
 
 	paint() {

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import DynamicTexture from './DynamicTexture.js';
 import GameEntity from './GameEntity.js';
 
 class Particle extends GameEntity {
@@ -13,18 +14,19 @@ class Particle extends GameEntity {
 	}
 
 	static createMesh(size, color) {
-		let geometry = new THREE.BoxGeometry(size, size, size);
-		let material = new THREE.MeshPhongMaterial({color});
-		return new THREE.Mesh(geometry, material);
+		let texture = new DynamicTexture(1, 1);
+		texture.ctx.fillStyle = color;
+		texture.ctx.fillRect(0, 0, 1, 1);
+		let material = texture.spriteMaterial;
+		let sprite = new THREE.Sprite(material);
+		sprite.scale.set(size, size, 1);
+		return sprite;
 	}
 
 	update() {
 		if (!this.#duration--)
 			return true;
 		this.mesh.position.add(this.#velocity);
-	}
-
-	paint() {
 	}
 }
 

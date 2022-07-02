@@ -3,7 +3,6 @@ import * as THREE from 'three';
 class DynamicTexture {
 	#ctx;
 	#texture;
-	#material;
 
 	constructor(width, height) {
 		let canvas = new OffscreenCanvas(width, height);
@@ -11,10 +10,6 @@ class DynamicTexture {
 		this.#texture = new THREE.Texture(canvas);
 		this.#texture.magFilter = THREE.NearestFilter;
 		this.#texture.minFilter = THREE.NearestFilter;
-		this.#material = new THREE.MeshPhongMaterial({
-			shininess: 0,
-			map: this.#texture,
-		});
 	}
 
 	get ctx() {
@@ -22,8 +17,17 @@ class DynamicTexture {
 		return this.#ctx;
 	}
 
-	get material() {
-		return this.#material;
+	get phongMaterial() {
+		return new THREE.MeshPhongMaterial({
+			shininess: 0,
+			map: this.#texture,
+		});
+	}
+
+	get spriteMaterial() {
+		return new THREE.SpriteMaterial({
+			map: this.#texture,
+		});
 	}
 }
 

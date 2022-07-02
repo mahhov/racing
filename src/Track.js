@@ -89,7 +89,7 @@ class Track extends GameEntity {
 
 	static trackSquare() {
 		let segments = new SegmentCreator()
-			.moveTo(100, 200, 20)
+			.moveTo(100, 200, 30)
 			.pathTo(100, 500)
 			.moveTo(200, 600)
 			.pathTo(500, 600)
@@ -98,7 +98,7 @@ class Track extends GameEntity {
 			.moveTo(500, 100)
 			.pathTo(200, 100)
 			.done();
-		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 300));
+		return new Track(700, 700, segments, new THREE.Vector3(100, 0, 300));
 	}
 
 	static createMesh(width, length, segments) {
@@ -111,7 +111,8 @@ class Track extends GameEntity {
 					texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
 
 		texture.ctx.fillStyle = '#00f';
-		segments.forEach(segment => {
+		segments.forEach((segment, i) => {
+			texture.ctx.fillStyle = `rgb(0,0,${155 + Math.floor(100 * i / segments.length)})`;
 			texture.ctx.beginPath();
 			texture.ctx.moveTo(...segment.left1.toArray());
 			texture.ctx.lineTo(...segment.right1.toArray());
@@ -132,7 +133,7 @@ class Track extends GameEntity {
 		let geometry = new THREE.PlaneGeometry(width, length);
 		geometry.lookAt(new THREE.Vector3(0, 1, 0));
 		geometry.translate(width / 2, 0, length / 2);
-		return new THREE.Mesh(geometry, texture.material);
+		return new THREE.Mesh(geometry, texture.phongMaterial);
 	}
 }
 
