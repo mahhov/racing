@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import GameEntity from './GameEntity.js';
-import {TrapezoidParams, cube, trapezoid, meshFromVectors} from './GeometryCreator.js';
+import {cube, meshFromVectors, trapezoid, TrapezoidParams} from './GeometryCreator.js';
 import Particle from './Particle.js';
 import {clamp, radian, rand, UP} from './util.js';
 
@@ -73,13 +73,14 @@ class Car extends GameEntity {
 		else {
 			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
 			this.#velocity.sub(v1).multiplyScalar(-.2).add(v1);
-			this.#direction = intersection.direction.normalize();
+			this.#direction = v1.normalize();
 		}
 
 		let particleCount =
 			(brake ? Math.floor(this.#velocity.length()) : 0) +
 			(forward ? 3 : 0) +
-			(this.#velocity.length() > .1 ? 1 : 0);
+			(this.#velocity.length() > .1 ? 1 : 0) +
+			(intersection ? 50 : 0);
 		for (let i = 0; i < particleCount; i++)
 			game.addParticle(new Particle(
 				this.#position.clone()

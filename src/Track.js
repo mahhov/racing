@@ -89,7 +89,7 @@ class Track extends GameEntity {
 
 	static trackSquare() {
 		let segments = new SegmentCreator()
-			.moveTo(100, 200, 50)
+			.moveTo(100, 200, 20)
 			.pathTo(100, 500)
 			.moveTo(200, 600)
 			.pathTo(500, 600)
