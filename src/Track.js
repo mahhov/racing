@@ -88,12 +88,16 @@ class Track extends GameEntity {
 	}
 
 	static trackSquare() {
-		let right = Segment.fromLine(new THREE.Vector2(100, 200), new THREE.Vector2(100, 500), 50, 50);
-		let top = Segment.fromLine(new THREE.Vector2(200, 600), new THREE.Vector2(500, 600), 50, 50);
-		let left = Segment.fromLine(new THREE.Vector2(600, 500), new THREE.Vector2(600, 200), 50, 50);
-		let bottom = Segment.fromLine(new THREE.Vector2(500, 100), new THREE.Vector2(200, 100), 50, 50);
-		let segments = [right, top, left, bottom].flatMap((segment, i, segments) =>
-			[segment, Segment.connectSegments(segment, segments[i < segments.length - 1 ? i + 1 : 0])]);
+		let segments = new SegmentCreator()
+			.moveTo(100, 200, 50)
+			.pathTo(100, 500)
+			.moveTo(200, 600)
+			.pathTo(500, 600)
+			.moveTo(600, 500)
+			.pathTo(600, 200)
+			.moveTo(500, 100)
+			.pathTo(200, 100)
+			.done();
 		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 300));
 	}
 
