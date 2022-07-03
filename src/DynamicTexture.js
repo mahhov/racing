@@ -29,6 +29,13 @@ class DynamicTexture {
 			map: this.#texture,
 		});
 	}
+
+	get uiMaterial() {
+		return new THREE.MeshBasicMaterial({
+			map: this.#texture,
+			transparent: true,
+		});
+	}
 }
 
 export default DynamicTexture;

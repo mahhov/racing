@@ -1,29 +1,19 @@
 import * as THREE from 'three';
-import Input from './Input.js';
 import Game from './Game.js';
+import Input from './Input.js';
 import PerSecondCount from './PerSecondCount.js';
+import Render from './Render.js';
 
-window.THREE = THREE;
+let render = new Render(800, 800);
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(800, 800);
-document.body.appendChild(renderer.domElement);
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-
-const light1 = new THREE.PointLight(0xffffff, 1, 0);
-light1.position.set(0, 30, 0);
-scene.add(light1);
-const ambientLight = new THREE.AmbientLight(0xAAAAAA);
-scene.add(ambientLight);
-
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+let sleep = ms => new Promise(r => setTimeout(r, ms));
 
 class Loop {
-	#game = new Game(scene, camera, false);
 	#input = new Input();
+	#game = new Game(this.#input, render.scene, render.camera, false);
 	#paintDirty = false;
+	#updatesPerSecond = new PerSecondCount(new THREE.Vector2(10, 30), 'UPS');
+	#paintsPerSecond = new PerSecondCount(new THREE.Vector2(10, 50), 'FPS');
 
 	constructor() {
 		this.#updateLoop();
@@ -31,30 +21,29 @@ class Loop {
 	}
 
 	async #updateLoop() {
-		let updatesPerSecond = new PerSecondCount();
 		let lastUpdate = 0;
 		while (true) {
 			await sleep(0);
 			let now = Date.now();
 			if (now - lastUpdate > 1000 / 60) {
 				lastUpdate = now;
-				this.#game.update(this.#input);
+				this.#game.update();
 				this.#paintDirty = true;
-				updatesPerSecond.add();
+				this.#updatesPerSecond.add();
 			}
-			updatesPerSecond.log('Updates');
 		}
 	}
 
 	#paintLoop() {
-		let paintsPerSecond = new PerSecondCount();
 		let loop = () => {
 			if (this.#paintDirty) {
-				this.#game.paint(camera);
-				renderer.render(scene, camera);
+				this.#paintsPerSecond.add();
 				this.#paintDirty = false;
-				paintsPerSecond.add();
-				paintsPerSecond.log('Paints');
+				this.#game.paint();
+				this.#game.paintUi(render.uiTexture.ctx, render.width, render.height);
+				this.#updatesPerSecond.paintUi(render.uiTexture.ctx, render.width, render.height);
+				this.#paintsPerSecond.paintUi(render.uiTexture.ctx, render.width, render.height);
+				render.render();
 			}
 			requestAnimationFrame(loop);
 		};

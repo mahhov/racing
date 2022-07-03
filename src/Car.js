@@ -44,7 +44,7 @@ class Car extends GameEntity {
 		return group;
 	}
 
-	update(game, intersectionManager, input) {
+	update(game, intersectionManager, lapManager, input) {
 		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1);
 
 		let forward = input.get('w') ? 1 : (input.get('s') ? -.5 : 0);
@@ -73,6 +73,8 @@ class Car extends GameEntity {
 			this.#velocity.sub(v1).multiplyScalar(-.2).add(v1);
 			this.#direction = v1.normalize();
 		}
+
+		lapManager.addLap(intersection.lapped);
 
 		let particleCount =
 			(brake ? Math.floor(this.#velocity.length()) : 0) +

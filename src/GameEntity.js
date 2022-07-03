@@ -1,11 +1,11 @@
-class GameEntity {
+import UiEntity from './UiEntity.js';
+
+class GameEntity extends UiEntity {
 	mesh;
 
 	constructor(mesh) {
+		super();
 		this.mesh = mesh;
-	}
-
-	update() {
 	}
 
 	paint() {
