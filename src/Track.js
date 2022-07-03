@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import DynamicTexture from './DynamicTexture.js';
 import GameEntity from './GameEntity.js';
-import {radian} from './util.js';
+import {radian, UP} from './util.js';
 
 class Segment {
 	left1;
@@ -19,7 +19,7 @@ class Segment {
 	static fromLine(p1, p2, w1, w2) {
 		const SMOOTHNESS = .3;
 		let dir = p2.clone().sub(p1).normalize();
-		let dir90 = dir.clone().rotateAround(new THREE.Vector2(), radian(90));
+		let dir90 = dir.clone().applyAxisAngle(UP, radian(90));
 		let left1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, w1);
 		let right1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, -w1);
 		let left2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, w2);
@@ -38,13 +38,13 @@ class SegmentCreator {
 	#width;
 
 	moveTo(x, y, width = this.#width) {
-		this.#position = new THREE.Vector2(x, y);
+		this.#position = new THREE.Vector3(x, 0, y);
 		this.#width = width;
 		return this;
 	}
 
 	pathTo(x, y, width = this.#width) {
-		let newSegment = Segment.fromLine(this.#position, new THREE.Vector2(x, y), this.#width, width);
+		let newSegment = Segment.fromLine(this.#position, new THREE.Vector3(x, 0, y), this.#width, width);
 		let lastSegment = this.#segments[this.#segments.length - 1];
 		if (lastSegment)
 			this.#segments.push(Segment.connectSegments(lastSegment, newSegment));
@@ -114,19 +114,19 @@ class Track extends GameEntity {
 		segments.forEach((segment, i) => {
 			texture.ctx.fillStyle = `rgb(0,0,${155 + Math.floor(100 * i / segments.length)})`;
 			texture.ctx.beginPath();
-			texture.ctx.moveTo(...segment.left1.toArray());
-			texture.ctx.lineTo(...segment.right1.toArray());
-			texture.ctx.lineTo(...segment.right2.toArray());
-			texture.ctx.lineTo(...segment.left2.toArray());
+			texture.ctx.moveTo(segment.left1.x, segment.left1.z);
+			texture.ctx.lineTo(segment.right1.x, segment.right1.z);
+			texture.ctx.lineTo(segment.right2.x, segment.right2.z);
+			texture.ctx.lineTo(segment.left2.x, segment.left2.z);
 			texture.ctx.fill();
 		});
 		texture.ctx.strokeStyle = '#fff';
 		segments.forEach(segment => {
 			texture.ctx.beginPath();
-			texture.ctx.moveTo(...segment.left1.toArray());
-			texture.ctx.lineTo(...segment.left2.toArray());
-			texture.ctx.moveTo(...segment.right1.toArray());
-			texture.ctx.lineTo(...segment.right2.toArray());
+			texture.ctx.moveTo(segment.left1.x, segment.left1.z);
+			texture.ctx.lineTo(segment.left2.x, segment.left2.z);
+			texture.ctx.moveTo(segment.right1.x, segment.right1.z);
+			texture.ctx.lineTo(segment.right2.x, segment.right2.z);
 			texture.ctx.stroke();
 		});
 

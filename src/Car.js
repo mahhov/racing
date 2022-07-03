@@ -14,8 +14,6 @@ class Car extends GameEntity {
 	#direction = new THREE.Vector3(0, 0, 1);
 	#wheelDirection = new THREE.Vector3(0, 0, 1);
 
-	#trackSegmentIndex;
-
 	constructor(startPosition) {
 		super(Car.createMesh());
 		this.#position = startPosition;
@@ -68,7 +66,7 @@ class Car extends GameEntity {
 			.multiplyScalar(decelerate);
 
 		let intersection = intersectionManager.canMove(this.#position, this.#velocity);
-		if (!intersection)
+		if (!intersection.position)
 			this.#position.add(this.#velocity);
 		else {
 			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
@@ -80,7 +78,7 @@ class Car extends GameEntity {
 			(brake ? Math.floor(this.#velocity.length()) : 0) +
 			(forward ? 3 : 0) +
 			(this.#velocity.length() > .1 ? 1 : 0) +
-			(intersection ? 50 : 0);
+			(intersection.position ? 50 : 0);
 		for (let i = 0; i < particleCount; i++)
 			game.addParticle(new Particle(
 				this.#position.clone()

@@ -1,6 +1,6 @@
 import Car from './Car.js';
-import IntersectionManager from './IntersectionManager.js';
 import FixedCamera from './FixedCamera.js';
+import IntersectionManager from './IntersectionManager.js';
 import SmoothCamera from './SmoothCamera.js';
 import Track from './Track.js';
 
