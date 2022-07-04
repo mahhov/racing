@@ -44,12 +44,34 @@ class Car extends GameEntity {
 		return group;
 	}
 
-	update(game, intersectionManager, lapManager, input) {
-		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1);
-
+	updatePlayer(game, intersectionManager, lapManager, input) {
 		let forward = input.get('w') ? 1 : (input.get('s') ? -.5 : 0);
 		let right = input.get('d') ? 1 : (input.get('a') ? -1 : 0);
 		let brake = input.get(' ');
+		this.update(game, intersectionManager, lapManager, forward, right, brake);
+	}
+
+	updateAi(game, intersectionManager, lapManager) {
+		let forward = 1;
+		let right = 0;
+		let brake = false;
+
+		let intersection = intersectionManager.canMove(this.#position, this.#velocity.clone().multiplyScalar(100));
+		if (intersection.position) {
+			let distance = intersection.distance * 100;
+			let cross = intersection.direction.normalize().cross(this.#velocity.clone().normalize().add(this.#direction).normalize()).y;
+			if (distance < 80)
+				right = Math.sign(cross) * clamp(1 - distance / 80, 0, 1);
+			if (distance < 20)
+				brake = true;
+		}
+
+		this.update(game, intersectionManager, lapManager, forward, right, brake);
+	}
+
+	update(game, intersectionManager, lapManager, forward, right, brake) {
+		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1);
+
 		if (forward < 0)
 			right *= -1;
 		if (brake)
@@ -70,7 +92,7 @@ class Car extends GameEntity {
 			this.#position.add(this.#velocity);
 		else {
 			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
-			this.#velocity.sub(v1).multiplyScalar(-.2).add(v1);
+			this.#velocity.sub(v1).multiplyScalar(-.2).addScaledVector(v1, .7);
 			this.#direction = v1.normalize();
 		}
 

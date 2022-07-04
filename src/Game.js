@@ -11,6 +11,7 @@ class Game extends UiEntity {
 	#scene;
 	#track;
 	#playerCar;
+	#opponentCar;
 	#intersectionManager;
 	#camera;
 	#lapManager;
@@ -22,8 +23,10 @@ class Game extends UiEntity {
 		this.#scene = scene;
 		this.#track = Track.trackSquare();
 		this.#scene.add(this.#track.mesh);
-		this.#playerCar = new Car(this.#track.startPosition);
+		this.#playerCar = new Car(this.#track.startPosition.clone());
 		this.#scene.add(this.#playerCar.mesh);
+		this.#opponentCar = new Car(this.#track.startPosition.clone());
+		this.#scene.add(this.#opponentCar.mesh);
 		this.#intersectionManager = new IntersectionManager(this.#track);
 		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
 		this.#lapManager = new LapManager(2);
@@ -35,7 +38,8 @@ class Game extends UiEntity {
 	}
 
 	update() {
-		this.#playerCar.update(this, this.#intersectionManager, this.#lapManager, this.#input);
+		this.#playerCar.updatePlayer(this, this.#intersectionManager, this.#lapManager, this.#input);
+		this.#opponentCar.updateAi(this, this.#intersectionManager, this.#lapManager);
 		this.#particles = this.#particles.filter(particle => {
 			if (particle.update())
 				this.#scene.remove(particle.mesh);
@@ -47,6 +51,7 @@ class Game extends UiEntity {
 
 	paint() {
 		this.#playerCar.paint();
+		this.#opponentCar.paint();
 		this.#track.paint();
 		this.#particles.forEach(particle => particle.paint());
 		this.#camera.follow(this.#playerCar.position);
