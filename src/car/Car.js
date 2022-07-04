@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import GameEntity from '../GameEntity.js';
-import {cube, meshFromVectors, trapezoid, TrapezoidParams} from '../util/GeometryCreator.js';
 import Particle from '../Particle.js';
+import {cube, meshFromVectors, trapezoid, TrapezoidParams} from '../util/GeometryCreator.js';
 import {clamp, radian, rand, UP} from '../util/util.js';
 import Controls from './Controls.js';
 
@@ -21,7 +21,7 @@ class Car extends GameEntity {
 	#direction = new THREE.Vector3(0, 0, 1);
 	#wheelDirection = new THREE.Vector3(0, 0, 1);
 
-	constructor(game, intersectionManager, lapManager, input,startPosition) {
+	constructor(game, intersectionManager, lapManager, input, startPosition) {
 		super(Car.createMesh());
 		this.#game = game;
 		this.#intersectionManager = intersectionManager;
@@ -96,13 +96,14 @@ class Car extends GameEntity {
 			(this.#controls.forward ? 3 : 0) +
 			(this.#velocity.length() > .1 ? 1 : 0) +
 			(intersection.position ? 50 : 0);
+		let particleSpeed = .08;
 		for (let i = 0; i < particleCount; i++)
-			this.#game.addParticle(new Particle(
+			this.#game.addEntity(new Particle(
 				this.#position.clone()
 					.addScaledVector(this.#direction, rand(1) - 3.5)
 					.addScaledVector(this.#direction.clone().applyAxisAngle(UP, radian(90)), rand(3) - 1.5)
 					.add(new THREE.Vector3(0, 1, 0)),
-				new THREE.Vector3(rand(.02) - .01, rand(.02) - .01, rand(.02) - .01), 100, .4, '#333'));
+				new THREE.Vector3(rand(particleSpeed) - particleSpeed / 2, rand(particleSpeed) - particleSpeed / 2, rand(particleSpeed) - particleSpeed / 2), 100, .4, '#888'));
 	}
 
 	paint() {

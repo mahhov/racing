@@ -16,6 +16,7 @@ class GameFrame extends Frame {
 	#camera;
 
 	#entities = [];
+	#addedEntities = [];
 
 	constructor(input, scene, camera, fixedCamera) {
 		super(input);
@@ -33,8 +34,8 @@ class GameFrame extends Frame {
 		this.#entities.push(this.#opponentCar);
 	}
 
-	addParticle(particle) {
-		this.#entities.push(particle);
+	addEntity(particle) {
+		this.#addedEntities.push(particle);
 		this.#scene.add(particle.mesh);
 	}
 
@@ -47,7 +48,8 @@ class GameFrame extends Frame {
 				return true;
 			else if (entity.mesh)
 				this.#scene.remove(entity.mesh);
-		});
+		}).concat(this.#addedEntities);
+		this.#addedEntities = [];
 	}
 
 	paint() {
