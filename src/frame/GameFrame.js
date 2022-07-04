@@ -1,4 +1,4 @@
-import Car from '../Car.js';
+import Car from '../car/Car.js';
 import FixedCamera from '../FixedCamera.js';
 import Input from '../Input.js';
 import IntersectionManager from '../IntersectionManager.js';
@@ -14,25 +14,27 @@ class GameFrame extends Frame {
 	#opponentCar;
 	#intersectionManager;
 	#camera;
-	#lapManager;
-	#particles = [];
+
+	#entities = [];
 
 	constructor(input, scene, camera, fixedCamera) {
 		super(input);
 		this.#scene = scene;
 		this.#track = Track.trackSquare();
-		this.#scene.add(this.#track.mesh);
-		this.#playerCar = new Car(this.#track.startPosition.clone());
-		this.#scene.add(this.#playerCar.mesh);
-		this.#opponentCar = new Car(this.#track.startPosition.clone());
-		this.#scene.add(this.#opponentCar.mesh);
 		this.#intersectionManager = new IntersectionManager(this.#track);
+		this.#scene.add(this.#track.mesh);
+		this.#playerCar = new Car(this, this.#intersectionManager, new LapManager(2), this.input, this.#track.startPosition.clone());
+		this.#scene.add(this.#playerCar.mesh);
+		this.#opponentCar = new Car(this, this.#intersectionManager, new LapManager(2), null, this.#track.startPosition.clone());
+		this.#scene.add(this.#opponentCar.mesh);
 		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
-		this.#lapManager = new LapManager(2);
+
+		this.#entities.push(this.#playerCar);
+		this.#entities.push(this.#opponentCar);
 	}
 
 	addParticle(particle) {
-		this.#particles.push(particle);
+		this.#entities.push(particle);
 		this.#scene.add(particle.mesh);
 	}
 
@@ -40,27 +42,22 @@ class GameFrame extends Frame {
 		if (this.input.getKey('p') === Input.states.PRESSED)
 			this.emit('pause');
 
-		this.#playerCar.updatePlayer(this, this.#intersectionManager, this.#lapManager, this.input);
-		this.#opponentCar.updateAi(this, this.#intersectionManager, this.#lapManager);
-		this.#particles = this.#particles.filter(particle => {
-			if (particle.update())
-				this.#scene.remove(particle.mesh);
-			else
+		this.#entities = this.#entities.filter(entity => {
+			if (!entity.update())
 				return true;
+			else if (entity.mesh)
+				this.#scene.remove(entity.mesh);
 		});
-		this.#lapManager.update();
 	}
 
 	paint() {
-		this.#playerCar.paint();
-		this.#opponentCar.paint();
+		this.#entities.forEach(entity => entity.paint());
 		this.#track.paint();
-		this.#particles.forEach(particle => particle.paint());
 		this.#camera.follow(this.#playerCar.position);
 	}
 
 	paintUi(ctx, width, height) {
-		this.#lapManager.paintUi(ctx, width, height);
+		this.#entities.forEach(entity => entity.paintUi(ctx, width, height));
 	}
 }
 

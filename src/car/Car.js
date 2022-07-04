@@ -1,21 +1,33 @@
 import * as THREE from 'three';
-import GameEntity from './GameEntity.js';
-import {cube, meshFromVectors, trapezoid, TrapezoidParams} from './GeometryCreator.js';
-import Particle from './Particle.js';
-import {clamp, radian, rand, UP} from './util.js';
+import GameEntity from '../GameEntity.js';
+import {cube, meshFromVectors, trapezoid, TrapezoidParams} from '../GeometryCreator.js';
+import Particle from '../Particle.js';
+import {clamp, radian, rand, UP} from '../util.js';
+import Controls from './Controls.js';
 
 const FRICTION = .03;
 const ACCELERATION = .1;
 const TURN = radian(2);
 
 class Car extends GameEntity {
+	#game;
+	#intersectionManager;
+	#lapManager;
+	#input;
+	#controls;
+
 	#position;
 	#velocity = new THREE.Vector3();
 	#direction = new THREE.Vector3(0, 0, 1);
 	#wheelDirection = new THREE.Vector3(0, 0, 1);
 
-	constructor(startPosition) {
+	constructor(game, intersectionManager, lapManager, input,startPosition) {
 		super(Car.createMesh());
+		this.#game = game;
+		this.#intersectionManager = intersectionManager;
+		this.#lapManager = lapManager;
+		this.#input = input;
+		this.#controls = new Controls();
 		this.#position = startPosition;
 	}
 
@@ -44,50 +56,30 @@ class Car extends GameEntity {
 		return group;
 	}
 
-	updatePlayer(game, intersectionManager, lapManager, input) {
-		let forward = input.getKey('w', true) ? 1 : (input.getKey('s', true) ? -.5 : 0);
-		let right = input.getKey('d', true) ? 1 : (input.getKey('a', true) ? -1 : 0);
-		let brake = input.getKey(' ', true);
-		this.update(game, intersectionManager, lapManager, forward, right, brake);
-	}
+	update() {
+		if (this.#input)
+			this.#controls.updatePlayer(this.#input);
+		else
+			this.#controls.updateAi(this.#position, this.#velocity, this.#direction, this.#intersectionManager);
 
-	updateAi(game, intersectionManager, lapManager) {
-		let forward = 1;
-		let right = 0;
-		let brake = false;
-
-		let intersection = intersectionManager.canMove(this.#position, this.#velocity.clone().multiplyScalar(100));
-		if (intersection.position) {
-			let distance = intersection.distance * 100;
-			let cross = intersection.direction.normalize().cross(this.#velocity.clone().normalize().add(this.#direction).normalize()).y;
-			if (distance < 80)
-				right = Math.sign(cross) * clamp(1 - distance / 80, 0, 1);
-			if (distance < 20)
-				brake = true;
-		}
-
-		this.update(game, intersectionManager, lapManager, forward, right, brake);
-	}
-
-	update(game, intersectionManager, lapManager, forward, right, brake) {
 		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1);
 
-		if (forward < 0)
-			right *= -1;
-		if (brake)
+		if (this.#controls.forward < 0)
+			this.#controls.right *= -1;
+		if (this.#controls.brake)
 			turnSpeed *= 1.5;
 
-		this.#wheelDirection = -radian(30) * right;
+		this.#wheelDirection = -radian(30) * this.#controls.right;
 
-		this.#direction.applyAxisAngle(UP, -turnSpeed * right);
+		this.#direction.applyAxisAngle(UP, -turnSpeed * this.#controls.right);
 
-		let decelerate = 1 - FRICTION - (brake ? .05 : 0);
+		let decelerate = 1 - FRICTION - (this.#controls.brake ? .05 : 0);
 		this.#velocity
-			.addScaledVector(this.#direction, ACCELERATION * forward)
+			.addScaledVector(this.#direction, ACCELERATION * this.#controls.forward)
 			.addScaledVector(this.#direction, this.#velocity.length() * (1 - decelerate) / 2)
 			.multiplyScalar(decelerate);
 
-		let intersection = intersectionManager.canMove(this.#position, this.#velocity);
+		let intersection = this.#intersectionManager.canMove(this.#position, this.#velocity);
 		if (!intersection.position)
 			this.#position.add(this.#velocity);
 		else {
@@ -96,15 +88,16 @@ class Car extends GameEntity {
 			this.#direction = v1.normalize();
 		}
 
-		lapManager.addLap(intersection.lapped);
+		this.#lapManager.addLap(intersection.lapped);
+		this.#lapManager.update();
 
 		let particleCount =
-			(brake ? Math.floor(this.#velocity.length()) : 0) +
-			(forward ? 3 : 0) +
+			(this.#controls.brake ? Math.floor(this.#velocity.length()) : 0) +
+			(this.#controls.forward ? 3 : 0) +
 			(this.#velocity.length() > .1 ? 1 : 0) +
 			(intersection.position ? 50 : 0);
 		for (let i = 0; i < particleCount; i++)
-			game.addParticle(new Particle(
+			this.#game.addParticle(new Particle(
 				this.#position.clone()
 					.addScaledVector(this.#direction, rand(1) - 3.5)
 					.addScaledVector(this.#direction.clone().applyAxisAngle(UP, radian(90)), rand(3) - 1.5)
@@ -118,6 +111,11 @@ class Car extends GameEntity {
 
 		this.mesh.children[3].rotation.y = this.#wheelDirection;
 		this.mesh.children[4].rotation.y = this.#wheelDirection;
+	}
+
+	paintUi(ctx, width, height) {
+		if (this.#input)
+			this.#lapManager.paintUi(ctx, width, height);
 	}
 
 	get position() {

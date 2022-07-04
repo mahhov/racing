@@ -6,6 +6,7 @@ class GameEntity {
 	}
 
 	update() {
+		// return true if expired
 	}
 
 	paint() {
