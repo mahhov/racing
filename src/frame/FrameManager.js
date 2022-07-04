@@ -1,36 +1,36 @@
 import GameEntity from '../GameEntity.js';
 import GameFrame from './GameFrame.js';
 import PauseFrame from './PauseFrame.js';
+import TrackFrame from './TrackFrame.js';
 
 class FrameManager extends GameEntity {
+	#trackFrame;
 	#gameFrame;
 	#pauseFrame;
-	#paused = false;
+	#activeFrame;
 
 	constructor(input, scene, camera, fixedCamera) {
 		super();
+		this.#trackFrame = new TrackFrame(input);
 		this.#gameFrame = new GameFrame(input, scene, camera, fixedCamera);
-		this.#pauseFrame = new PauseFrame(input);
+		this.#pauseFrame = new PauseFrame(input, this.#gameFrame);
 
-		this.#gameFrame.addListener('pause', () => this.#paused = true);
-		this.#pauseFrame.addListener('resume', () => this.#paused = false);
+		this.#activeFrame = this.#gameFrame;
+
+		this.#gameFrame.addListener('pause', () => this.#activeFrame = this.#pauseFrame);
+		this.#pauseFrame.addListener('resume', () => this.#activeFrame = this.#gameFrame);
 	}
 
 	update() {
-		if (!this.#paused)
-			this.#gameFrame.update();
-		else
-			this.#pauseFrame.update();
+		this.#activeFrame.update();
 	}
 
 	paint() {
-		this.#gameFrame.paint();
+		this.#activeFrame.paint();
 	}
 
 	paintUi(ctx, width, height) {
-		this.#gameFrame.paintUi(ctx, width, height);
-		if (this.#paused)
-			this.#pauseFrame.paintUi(ctx, width, height);
+		this.#activeFrame.paintUi(ctx, width, height);
 	}
 }
 
