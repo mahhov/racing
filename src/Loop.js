@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import FrameManager from './frame/FrameManager.js';
 import Input from './Input.js';
-import PerSecondCount from './PerSecondCount.js';
+import PerSecondCount from './util/PerSecondCount.js';
 import Render from './Render.js';
-import {sleep} from './util.js';
+import {sleep} from './util/util.js';
 
 class Loop {
 	#render = new Render(800, 800);

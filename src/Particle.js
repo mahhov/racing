@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import DynamicTexture from './DynamicTexture.js';
 import GameEntity from './GameEntity.js';
+import DynamicTexture from './util/DynamicTexture.js';
 
 class Particle extends GameEntity {
 	#velocity;

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import DynamicTexture from './DynamicTexture.js';
+import DynamicTexture from './util/DynamicTexture.js';
 
 class Render {
 	width;

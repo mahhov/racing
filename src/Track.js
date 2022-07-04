@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import DynamicTexture from './DynamicTexture.js';
+import DynamicTexture from './util/DynamicTexture.js';
 import GameEntity from './GameEntity.js';
-import {radian, UP} from './util.js';
+import {radian, UP} from './util/util.js';
 
 class Segment {
 	left1;

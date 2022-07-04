@@ -1,4 +1,4 @@
-import GameEntity from './GameEntity.js';
+import GameEntity from '../GameEntity.js';
 
 class PerSecondCount extends GameEntity {
 	#position;

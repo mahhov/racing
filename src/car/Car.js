@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import GameEntity from '../GameEntity.js';
-import {cube, meshFromVectors, trapezoid, TrapezoidParams} from '../GeometryCreator.js';
+import {cube, meshFromVectors, trapezoid, TrapezoidParams} from '../util/GeometryCreator.js';
 import Particle from '../Particle.js';
-import {clamp, radian, rand, UP} from '../util.js';
+import {clamp, radian, rand, UP} from '../util/util.js';
 import Controls from './Controls.js';
 
 const FRICTION = .03;

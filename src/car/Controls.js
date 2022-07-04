@@ -1,4 +1,4 @@
-import {clamp} from '../util.js';
+import {clamp} from '../util/util.js';
 
 class Controls {
 	forward = 0;

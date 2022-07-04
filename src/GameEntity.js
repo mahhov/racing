@@ -1,7 +1,10 @@
-class GameEntity {
+import Emitter from './util/Emitter.js';
+
+class GameEntity extends Emitter {
 	mesh;
 
 	constructor(mesh = null) {
+		super();
 		this.mesh = mesh;
 	}
 
