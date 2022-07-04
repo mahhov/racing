@@ -1,6 +1,6 @@
-import UiEntity from './UiEntity.js';
+import GameEntity from './GameEntity.js';
 
-class PerSecondCount extends UiEntity {
+class PerSecondCount extends GameEntity {
 	#position;
 	#prefixText;
 	#start = 0;

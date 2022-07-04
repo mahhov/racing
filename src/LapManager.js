@@ -1,6 +1,6 @@
-import UiEntity from './UiEntity.js';
+import GameEntity from './GameEntity.js';
 
-class LapManager extends UiEntity {
+class LapManager extends GameEntity {
 	#maxLap;
 	#lap = 0;
 	#ticks = 0;

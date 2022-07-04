@@ -1,10 +1,10 @@
 import Car from '../Car.js';
 import FixedCamera from '../FixedCamera.js';
-import Frame from './Frame.js';
 import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
 import SmoothCamera from '../SmoothCamera.js';
 import Track from '../Track.js';
+import Frame from './Frame.js';
 
 class GameFrame extends Frame {
 	#scene;

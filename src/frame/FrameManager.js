@@ -1,8 +1,8 @@
-import UiEntity from '../UiEntity.js';
+import GameEntity from '../GameEntity.js';
 import GameFrame from './GameFrame.js';
 import PauseFrame from './PauseFrame.js';
 
-class FrameManager extends UiEntity {
+class FrameManager extends GameEntity {
 	#gameFrame;
 	#pauseFrame;
 	#paused = false;

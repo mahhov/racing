@@ -1,6 +1,6 @@
-import UiEntity from '../UiEntity.js';
+import GameEntity from '../GameEntity.js';
 
-class Frame extends UiEntity {
+class Frame extends GameEntity {
 	input;
 	#listeners = {};
 
