@@ -1,13 +1,12 @@
-import Car from './Car.js';
-import FixedCamera from './FixedCamera.js';
-import IntersectionManager from './IntersectionManager.js';
-import LapManager from './LapManager.js';
-import SmoothCamera from './SmoothCamera.js';
-import Track from './Track.js';
-import UiEntity from './UiEntity.js';
+import Car from '../Car.js';
+import FixedCamera from '../FixedCamera.js';
+import Frame from './Frame.js';
+import IntersectionManager from '../IntersectionManager.js';
+import LapManager from '../LapManager.js';
+import SmoothCamera from '../SmoothCamera.js';
+import Track from '../Track.js';
 
-class Game extends UiEntity {
-	#input;
+class GameFrame extends Frame {
 	#scene;
 	#track;
 	#playerCar;
@@ -18,8 +17,7 @@ class Game extends UiEntity {
 	#particles = [];
 
 	constructor(input, scene, camera, fixedCamera) {
-		super();
-		this.#input = input;
+		super(input);
 		this.#scene = scene;
 		this.#track = Track.trackSquare();
 		this.#scene.add(this.#track.mesh);
@@ -38,7 +36,10 @@ class Game extends UiEntity {
 	}
 
 	update() {
-		this.#playerCar.updatePlayer(this, this.#intersectionManager, this.#lapManager, this.#input);
+		if (this.input.get('p'))
+			this.emit('pause');
+
+		this.#playerCar.updatePlayer(this, this.#intersectionManager, this.#lapManager, this.input);
 		this.#opponentCar.updateAi(this, this.#intersectionManager, this.#lapManager);
 		this.#particles = this.#particles.filter(particle => {
 			if (particle.update())
@@ -62,4 +63,4 @@ class Game extends UiEntity {
 	}
 }
 
-export default Game;
+export default GameFrame;
