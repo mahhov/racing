@@ -16,7 +16,7 @@ class PerSecondCount extends GameEntity {
 	add() {
 		this.#count++;
 
-		let now = Date.now();
+		let now = performance.now();
 		if (this.elapsedSecond(now)) {
 			this.#text = `${this.#prefixText} ${this.#count}`;
 			this.reset(now);
