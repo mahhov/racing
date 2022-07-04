@@ -1,3 +1,4 @@
+import Input from '../Input.js';
 import Frame from './Frame.js';
 
 class PauseFrame extends Frame {
@@ -6,7 +7,7 @@ class PauseFrame extends Frame {
 	}
 
 	update() {
-		if (this.input.get('p'))
+		if (this.input.getKey('p') === Input.states.PRESSED)
 			this.emit('resume');
 	}
 

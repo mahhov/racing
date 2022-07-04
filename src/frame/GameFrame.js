@@ -1,5 +1,6 @@
 import Car from '../Car.js';
 import FixedCamera from '../FixedCamera.js';
+import Input from '../Input.js';
 import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
 import SmoothCamera from '../SmoothCamera.js';
@@ -36,7 +37,7 @@ class GameFrame extends Frame {
 	}
 
 	update() {
-		if (this.input.get('p'))
+		if (this.input.getKey('p') === Input.states.PRESSED)
 			this.emit('pause');
 
 		this.#playerCar.updatePlayer(this, this.#intersectionManager, this.#lapManager, this.input);

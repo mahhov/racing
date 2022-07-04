@@ -28,6 +28,7 @@ class Loop {
 				this.#frameManager.update();
 				this.#paintDirty = true;
 				this.#updatesPerSecond.add();
+				this.#input.update();
 			}
 		}
 	}

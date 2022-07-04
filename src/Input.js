@@ -1,5 +1,9 @@
 class Input {
-	#keys = [];
+	static states = {
+		UP: 0, PRESSED: 1, DOWN: 2, RELEASED: 3,
+	};
+
+	#keys = {};
 
 	constructor() {
 		document.addEventListener('keydown', e => this.#keyDown(e));
@@ -7,15 +11,25 @@ class Input {
 	}
 
 	#keyDown(e) {
-		this.#keys[e.key] = true;
+		this.#keys[e.key] = Input.states.PRESSED;
 	}
 
 	#keyUp(e) {
-		this.#keys[e.key] = false;
+		this.#keys[e.key] = Input.states.RELEASED;
 	}
 
-	get(key) {
-		return this.#keys[key];
+	update() {
+		Object.entries(this.#keys).forEach(([key, state]) => {
+			if (state === Input.states.PRESSED)
+				state = Input.states.DOWN;
+			else if (state === Input.states.RELEASED)
+				state = Input.states.UP;
+			this.#keys[key] = state;
+		});
+	}
+
+	getKey(key, bool = false) {
+		return bool ? this.#keys[key] === Input.states.PRESSED || this.#keys[key] === Input.states.DOWN : this.#keys[key];
 	}
 }
 

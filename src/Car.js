@@ -45,9 +45,9 @@ class Car extends GameEntity {
 	}
 
 	updatePlayer(game, intersectionManager, lapManager, input) {
-		let forward = input.get('w') ? 1 : (input.get('s') ? -.5 : 0);
-		let right = input.get('d') ? 1 : (input.get('a') ? -1 : 0);
-		let brake = input.get(' ');
+		let forward = input.getKey('w', true) ? 1 : (input.getKey('s', true) ? -.5 : 0);
+		let right = input.getKey('d', true) ? 1 : (input.getKey('a', true) ? -1 : 0);
+		let brake = input.getKey(' ', true);
 		this.update(game, intersectionManager, lapManager, forward, right, brake);
 	}
 
