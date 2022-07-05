@@ -2,7 +2,7 @@ import Emitter from './util/Emitter.js';
 
 class GameEntity extends Emitter {
 	mesh;
-	#uiComponents = [];
+	uiComponents = [];
 
 	constructor(mesh = null) {
 		super();
@@ -10,17 +10,17 @@ class GameEntity extends Emitter {
 	}
 
 	addUiComponent(uiComponent) {
-		this.#uiComponents.push(uiComponent);
+		this.uiComponents.push(uiComponent);
 		return uiComponent;
 	}
 
 	update() {
-		this.#uiComponents.forEach(uiComponent => uiComponent.update());
+		this.uiComponents.forEach(uiComponent => uiComponent.update());
 		// return true if expired
 	}
 
 	paintUi(ctx, width, height) {
-		this.#uiComponents.forEach(uiComponent => uiComponent.paintUi(ctx, width, height));
+		this.uiComponents.forEach(uiComponent => uiComponent.paintUi(ctx, width, height));
 	}
 }
 
