@@ -18,7 +18,7 @@ class Render {
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize(width, height);
 		this.renderer.autoClear = false;
-		document.body.appendChild(this.renderer.domElement);
+		document.body.appendChild(this.canvas);
 
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
@@ -33,6 +33,10 @@ class Render {
 		this.uiCamera = new THREE.OrthographicCamera(-.5, .5, .5, -.5, 0, 1);
 		this.uiTexture = new DynamicTexture(width, height);
 		this.uiScene.add(new THREE.Mesh(new THREE.PlaneGeometry(), this.uiTexture.uiMaterial));
+	}
+
+	get canvas() {
+		return this.renderer.domElement;
 	}
 
 	render() {

@@ -8,7 +8,7 @@ class UiRect extends UiComponent {
 	#fillColor;
 	#outlineColor;
 
-	constructor(left, top, width, height, fillColor,outlineColor) {
+	constructor(left, top, width, height, fillColor, outlineColor) {
 		super();
 		this.#left = left;
 		this.#top = top;
@@ -16,6 +16,10 @@ class UiRect extends UiComponent {
 		this.#height = height;
 		this.#fillColor = fillColor;
 		this.#outlineColor = outlineColor;
+	}
+
+	set fillColor(fillColor) {
+		this.#fillColor = fillColor;
 	}
 
 	paintUi(ctx, width, height) {

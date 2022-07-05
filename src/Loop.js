@@ -1,13 +1,12 @@
-import * as THREE from 'three';
 import FrameManager from './frame/FrameManager.js';
 import Input from './Input.js';
-import PerSecondCount from './util/PerSecondCount.js';
 import Render from './Render.js';
+import PerSecondCount from './util/PerSecondCount.js';
 import {sleep} from './util/util.js';
 
 class Loop {
 	#render = new Render(800, 800);
-	#input = new Input();
+	#input = new Input(this.#render.canvas);
 	#frameManager = new FrameManager(this.#input, this.#render.scene, this.#render.camera, false);
 	#paintDirty = false;
 	#updatesPerSecond = new PerSecondCount(0, 'UPS');
