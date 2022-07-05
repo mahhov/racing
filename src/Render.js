@@ -39,9 +39,10 @@ class Render {
 		return this.renderer.domElement;
 	}
 
-	render() {
+	render(uiOnly) {
 		this.renderer.clear();
-		this.renderer.render(this.scene, this.camera);
+		if (!uiOnly)
+			this.renderer.render(this.scene, this.camera);
 		this.renderer.render(this.uiScene, this.uiCamera);
 		this.uiTexture.ctx.clearRect(0, 0, this.width, this.height);
 	}

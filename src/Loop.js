@@ -40,7 +40,7 @@ class Loop {
 			this.#frameManager.paintUi(this.#render.uiTexture.ctx, this.#render.width, this.#render.height);
 			this.#updatesPerSecond.paintUi(this.#render.uiTexture.ctx, this.#render.width, this.#render.height);
 			this.#paintsPerSecond.paintUi(this.#render.uiTexture.ctx, this.#render.width, this.#render.height);
-			this.#render.render();
+			this.#render.render(this.#frameManager.uiOnly);
 		}
 		requestAnimationFrame(() => this.#paintLoop());
 	}

@@ -15,10 +15,16 @@ class FrameManager extends GameEntity {
 		this.#gameFrame = new GameFrame(input, scene, camera, fixedCamera);
 		this.#pauseFrame = new PauseFrame(input, this.#gameFrame);
 
-		this.#activeFrame = this.#gameFrame;
+		this.#activeFrame = this.#trackFrame;
 
 		this.#gameFrame.addListener('pause', () => this.#activeFrame = this.#pauseFrame);
 		this.#pauseFrame.addListener('resume', () => this.#activeFrame = this.#gameFrame);
+		this.#pauseFrame.addListener('abandon', () => this.#activeFrame = this.#trackFrame);
+		this.#trackFrame.addListener('select', i => this.#activeFrame = this.#gameFrame);
+	}
+
+	get uiOnly() {
+		return this.#activeFrame !== this.#pauseFrame && this.#activeFrame !== this.#gameFrame;
 	}
 
 	update() {
