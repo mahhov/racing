@@ -11,7 +11,7 @@ class PerSecondCount extends GameEntity {
 	constructor(line, prefixText) {
 		super();
 		this.#prefixText = prefixText;
-		this.#text = new UiText('', .05, .05 + .03 * line, 'left', '#fff', '20px arial');
+		this.#text = this.addUiComponent(new UiText('', .05, .05 + .03 * line, 'left', '#fff', '20px arial'));
 	}
 
 	add() {
@@ -34,7 +34,7 @@ class PerSecondCount extends GameEntity {
 	}
 
 	paintUi(ctx, width, height) {
-		this.#text.paintUi(ctx, width, height);
+		super.paintUi(ctx, width, height);
 	}
 }
 

@@ -6,12 +6,14 @@ class LapManager extends GameEntity {
 	#lap = 0;
 	#ticks = 0;
 
-	#lapText = new UiText('', .95, .05, 'right', '#fff', '20px arial');
-	#timeText = new UiText('', .95, .08, 'right', '#fff', '20px arial');
+	#lapText;
+	#timeText;
 
 	constructor(maxLap) {
 		super();
 		this.#maxLap = maxLap;
+		this.#lapText = this.addUiComponent(new UiText('', .95, .05, 'right', '#fff', '20px arial'));
+		this.#timeText = this.addUiComponent(new UiText('', .95, .08, 'right', '#fff', '20px arial'));
 	}
 
 	addLap(delta) {
@@ -19,6 +21,7 @@ class LapManager extends GameEntity {
 	}
 
 	update() {
+		super.update();
 		this.#ticks++;
 	}
 
@@ -28,8 +31,7 @@ class LapManager extends GameEntity {
 		let minutes = Math.floor(seconds / 60);
 		this.#timeText.text = `${minutes}:${seconds % 60}`;
 
-		this.#lapText.paintUi(ctx, width, height);
-		this.#timeText.paintUi(ctx, width, height);
+		super.paintUi(ctx, width, height);
 	}
 }
 

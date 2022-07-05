@@ -19,8 +19,8 @@ class UiButton extends UiComponent {
 		this.#width = width;
 		this.#height = height;
 
-		this.add(new UiRect(left - width / 2, top, width, height, '#000', '#fff'));
-		this.add(new UiText(text, left, top + height, 'center', '#fff', '30px arial'));
+		this.addUiComponent(new UiRect(left - width / 2, top, width, height, '#000', '#fff'));
+		this.addUiComponent(new UiText(text, left, top + height, 'center', '#fff', '30px arial'));
 	}
 
 	update() {
