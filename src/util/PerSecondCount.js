@@ -1,16 +1,17 @@
 import GameEntity from '../GameEntity.js';
+import UiText from '../ui/UiText.js';
 
 class PerSecondCount extends GameEntity {
-	#position;
 	#prefixText;
 	#start = 0;
 	#count = 0;
+
 	#text;
 
-	constructor(position, prefixText) {
+	constructor(line, prefixText) {
 		super();
-		this.#position = position;
 		this.#prefixText = prefixText;
+		this.#text = new UiText('', .05, .05 + .03 * line, 'left', '#fff', '20px arial');
 	}
 
 	add() {
@@ -18,7 +19,7 @@ class PerSecondCount extends GameEntity {
 
 		let now = performance.now();
 		if (this.elapsedSecond(now)) {
-			this.#text = `${this.#prefixText} ${this.#count}`;
+			this.#text.text = `${this.#prefixText} ${this.#count}`;
 			this.reset(now);
 		}
 	}
@@ -33,9 +34,7 @@ class PerSecondCount extends GameEntity {
 	}
 
 	paintUi(ctx, width, height) {
-		ctx.fillStyle = '#fff';
-		ctx.font = '20px arial';
-		ctx.fillText(this.#text, this.#position.x, this.#position.y);
+		this.#text.paintUi(ctx, width, height);
 	}
 }
 

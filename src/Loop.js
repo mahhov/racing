@@ -10,8 +10,8 @@ class Loop {
 	#input = new Input();
 	#frameManager = new FrameManager(this.#input, this.#render.scene, this.#render.camera, false);
 	#paintDirty = false;
-	#updatesPerSecond = new PerSecondCount(new THREE.Vector2(10, 30), 'UPS');
-	#paintsPerSecond = new PerSecondCount(new THREE.Vector2(10, 50), 'FPS');
+	#updatesPerSecond = new PerSecondCount(0, 'UPS');
+	#paintsPerSecond = new PerSecondCount(1, 'FPS');
 
 	constructor() {
 		this.#updateLoop();

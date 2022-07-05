@@ -1,9 +1,13 @@
 import GameEntity from './GameEntity.js';
+import UiText from './ui/UiText.js';
 
 class LapManager extends GameEntity {
 	#maxLap;
 	#lap = 0;
 	#ticks = 0;
+
+	#lapText = new UiText('', .95, .05, 'right', '#fff', '20px arial');
+	#timeText = new UiText('', .95, .08, 'right', '#fff', '20px arial');
 
 	constructor(maxLap) {
 		super();
@@ -19,12 +23,13 @@ class LapManager extends GameEntity {
 	}
 
 	paintUi(ctx, width, height) {
-		ctx.fillStyle = '#fff';
-		ctx.font = '20px arial';
-		ctx.fillText(`${this.#lap + 1} / ${this.#maxLap}`, width - 130, 30);
+		this.#lapText.text = `${this.#lap + 1} / ${this.#maxLap}`;
 		let seconds = Math.floor(this.#ticks / 20);
 		let minutes = Math.floor(seconds / 60);
-		ctx.fillText(`${minutes}:${seconds % 60}`, width - 130, 60);
+		this.#timeText.text = `${minutes}:${seconds % 60}`;
+
+		this.#lapText.paintUi(ctx, width, height);
+		this.#timeText.paintUi(ctx, width, height);
 	}
 }
 

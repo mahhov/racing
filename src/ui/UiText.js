@@ -18,6 +18,10 @@ class UiText extends UiComponent {
 		this.#font = font;
 	}
 
+	set text(text) {
+		this.#text = text;
+	}
+
 	paintUi(ctx, width, height) {
 		ctx.textAlign = this.#textAlign;
 		ctx.fillStyle = this.#color;
