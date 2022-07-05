@@ -19,10 +19,6 @@ class GameEntity extends Emitter {
 		// return true if expired
 	}
 
-	paint() {
-		this.#uiComponents.forEach(uiComponent => uiComponent.paint());
-	}
-
 	paintUi(ctx, width, height) {
 		this.#uiComponents.forEach(uiComponent => uiComponent.paintUi(ctx, width, height));
 	}

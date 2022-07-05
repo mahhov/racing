@@ -25,11 +25,6 @@ class PauseFrame extends UiComponent {
 		super.update();
 	}
 
-	paint() {
-		this.#gameFrame.paint();
-		super.paint();
-	}
-
 	paintUi(ctx, width, height) {
 		this.#gameFrame.paintUi(ctx, width, height);
 		super.paintUi(ctx, width, height);

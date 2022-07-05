@@ -74,11 +74,7 @@ class GameFrame extends UiComponent {
 			}).concat(this.#addedEntities);
 			this.#addedEntities = [];
 		}
-	}
 
-	paint() {
-		this.#entities.forEach(entity => entity.paint());
-		this.#track.paint();
 		this.#camera.follow(this.#playerCar.position);
 	}
 

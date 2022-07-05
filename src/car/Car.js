@@ -112,12 +112,9 @@ class Car extends GameEntity {
 					.addScaledVector(this.#direction.clone().applyAxisAngle(UP, radian(90)), rand(3) - 1.5)
 					.add(new THREE.Vector3(0, 1, 0)),
 				new THREE.Vector3(rand(particleSpeed) - particleSpeed / 2, rand(particleSpeed) - particleSpeed / 2, rand(particleSpeed) - particleSpeed / 2), 100, .4, '#888'));
-	}
 
-	paint() {
 		this.mesh.position.copy(this.#position);
 		this.mesh.lookAt(this.#position.clone().add(this.#direction));
-
 		this.mesh.children[3].rotation.y = this.#wheelDirection;
 		this.mesh.children[4].rotation.y = this.#wheelDirection;
 	}

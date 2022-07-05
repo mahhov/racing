@@ -21,11 +21,6 @@ class EndFrame extends UiComponent {
 		this.#text.text = win ? 'Victory' : 'Loss';
 	}
 
-	paint() {
-		this.#gameFrame.paint();
-		super.paint();
-	}
-
 	paintUi(ctx, width, height) {
 		this.#gameFrame.paintUi(ctx, width, height);
 		super.paintUi(ctx, width, height);
