@@ -6,7 +6,6 @@ import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
 import SmoothCamera from '../SmoothCamera.js';
 import UiComponent from '../ui/UiComponent.js';
-import UiText from '../ui/UiText.js';
 
 class GameFrame extends UiComponent {
 	#scene;
@@ -17,16 +16,13 @@ class GameFrame extends UiComponent {
 	#opponentCar;
 	#intersectionManager;
 
-	#entities = [];
-	#addedEntities = [];
-
-	#endText ;
+	#entities;
+	#addedEntities;
 
 	constructor(input, scene, camera, fixedCamera) {
 		super(input);
 		this.#scene = scene;
 		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
-		this.#endText = new UiText('', .5, .5, 'center', '#fff')
 	}
 
 	reset(track) {
@@ -36,6 +32,7 @@ class GameFrame extends UiComponent {
 		this.#scene.add(light1);
 		let ambientLight = new THREE.AmbientLight(0xAAAAAA);
 		this.#scene.add(ambientLight);
+		this.#camera.reset();
 
 		this.#track = track;
 		this.#intersectionManager = new IntersectionManager(this.#track);
@@ -45,6 +42,8 @@ class GameFrame extends UiComponent {
 		this.#opponentCar = new Car(this, this.#intersectionManager, new LapManager(1), null, this.#track.startPosition.clone());
 		this.#scene.add(this.#opponentCar.mesh);
 
+		this.#entities = [];
+		this.#addedEntities = [];
 		this.#entities.push(this.#playerCar);
 		this.#entities.push(this.#opponentCar);
 	}
@@ -60,10 +59,11 @@ class GameFrame extends UiComponent {
 		if (this.input.getKey('p') === Input.states.PRESSED)
 			this.emit('pause');
 
+
 		if (this.#playerCar.done)
-			console.log('win');
+			this.emit('end', true);
 		else if (this.#opponentCar.done)
-			console.log('lose');
+			this.emit('end', false);
 
 		else {
 			this.#entities = this.#entities.filter(entity => {

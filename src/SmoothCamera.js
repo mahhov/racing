@@ -5,6 +5,9 @@ class SmoothCamera {
 
 	constructor(camera) {
 		this.#camera = camera;
+	}
+
+	reset(){
 		this.#camera.position.copy(0, 0, -1000);
 	}
 
