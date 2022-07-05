@@ -33,24 +33,25 @@ class UiButton extends UiComponent {
 		this.#disabled = disabled;
 	}
 
+	get active() {
+		return this.#state !== UiButton.states.OFF;
+	}
+
 	update() {
 		super.update();
-		if (this.#disabled) {
-			this.#text.color = '#999';
-			this.#rect.fillColor = '#333';
-			return;
-		}
-
-		this.#text.color = '#fff';
 
 		let mousePosition = this.input.getMousePosition();
 		let dx = mousePosition[0] - this.#centerX + this.#width / 2;
 		let dy = mousePosition[1] - this.#top;
 		if (dx > 0 && dx < this.#width && dy > 0 && dy < this.#height)
-			this.#state = this.input.getMouseState() === Input.states.PRESSED ? UiButton.states.CLICK : UiButton.states.HOVER;
+			this.#state = this.input.getMouseState() === Input.states.PRESSED && !this.#disabled ?
+				UiButton.states.CLICK : UiButton.states.HOVER;
 		else
 			this.#state = UiButton.states.OFF;
-		this.#rect.fillColor = ['#000', '#555', '#aaa'][this.#state];
+
+		this.#rect.fillColor = this.#disabled ? '#333' : ['#000', '#555', '#aaa'][this.#state];
+		this.#text.color = this.#disabled ? '#999' : '#fff';
+
 		if (this.#state === UiButton.states.CLICK)
 			this.emit('click');
 	}

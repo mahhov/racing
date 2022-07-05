@@ -15,6 +15,7 @@ class TrackInfo {
 const TRACK_INFOS = [
 	new TrackInfo('B', Track.trackB(), 300),
 	new TrackInfo('Square', Track.trackSquare(), 1000),
+	new TrackInfo('Square', Track.trackSquare(), 1000),
 ];
 
 export default TRACK_INFOS;

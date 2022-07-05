@@ -1,9 +1,11 @@
 import TRACK_INFOS from '../TrackInfo.js';
 import UiButton from '../ui/UiButton.js';
 import UiComponent from '../ui/UiComponent.js';
+import UiText from '../ui/UiText.js';
 
 class TrackFrame extends UiComponent {
 	#save;
+	#helpText;
 
 	constructor(input, save) {
 		super(input);
@@ -13,14 +15,20 @@ class TrackFrame extends UiComponent {
 			button.addListener('click', () => this.emit('select', trackInfo));
 			button.disabled = !save.tracksUnlocked[i];
 		});
+		this.#helpText = this.addUiComponent(new UiText('', .5, .7, 'center', '#fff'));
 	}
 
 	update() {
 		super.update();
+		this.#helpText.text = '';
 		TRACK_INFOS.forEach((trackInfo, i) => {
-			let button = this.uiComponents[i];
-			button.disabled = !this.#save.tracksUnlocked[i];
+			this.uiComponents[i].disabled = !this.#save.tracksUnlocked[i];
+			if (this.uiComponents[i].active)
+				this.#helpText.text = this.#save.tracksUnlocked[i] ?
+					`Reward: ${trackInfo.currencyReward}` :
+					'Complete the previous tracks to unlock.';
 		});
+
 	}
 }
 
