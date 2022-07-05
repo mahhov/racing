@@ -1,19 +1,20 @@
+import * as THREE from 'three';
 import Car from '../car/Car.js';
 import FixedCamera from '../FixedCamera.js';
 import Input from '../Input.js';
 import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
 import SmoothCamera from '../SmoothCamera.js';
-import Track from '../Track.js';
 import UiComponent from '../ui/UiComponent.js';
 
 class GameFrame extends UiComponent {
 	#scene;
+	#camera;
+
 	#track;
 	#playerCar;
 	#opponentCar;
 	#intersectionManager;
-	#camera;
 
 	#entities = [];
 	#addedEntities = [];
@@ -21,20 +22,32 @@ class GameFrame extends UiComponent {
 	constructor(input, scene, camera, fixedCamera) {
 		super(input);
 		this.#scene = scene;
-		this.#track = Track.trackSquare();
+		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
+	}
+
+	reset(track) {
+		this.#scene.clear();
+		let light1 = new THREE.PointLight(0xffffff, 1, 0);
+		light1.position.set(0, 30, 0);
+		this.#scene.add(light1);
+		let ambientLight = new THREE.AmbientLight(0xAAAAAA);
+		this.#scene.add(ambientLight);
+
+		this.#track = track;
 		this.#intersectionManager = new IntersectionManager(this.#track);
 		this.#scene.add(this.#track.mesh);
 		this.#playerCar = new Car(this, this.#intersectionManager, new LapManager(2), this.input, this.#track.startPosition.clone());
 		this.#scene.add(this.#playerCar.mesh);
 		this.#opponentCar = new Car(this, this.#intersectionManager, new LapManager(2), null, this.#track.startPosition.clone());
 		this.#scene.add(this.#opponentCar.mesh);
-		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
 
 		this.#entities.push(this.#playerCar);
 		this.#entities.push(this.#opponentCar);
 	}
 
 	addEntity(particle) {
+		if (this.#entities.length + this.#addedEntities.length > 1500)
+			return;
 		this.#addedEntities.push(particle);
 		this.#scene.add(particle.mesh);
 	}

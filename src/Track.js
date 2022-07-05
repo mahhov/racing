@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import DynamicTexture from './util/DynamicTexture.js';
 import GameEntity from './GameEntity.js';
+import DynamicTexture from './util/DynamicTexture.js';
 import {radian, UP} from './util/util.js';
 
 class Segment {
@@ -36,6 +36,12 @@ class SegmentCreator {
 	#segments = [];
 	#position;
 	#width;
+
+	lineAt(x, y, x2, y2, width = this.#width) {
+		this.moveTo(x, y, width);
+		this.pathTo(x2, y2, width);
+		return this;
+	}
 
 	moveTo(x, y, width = this.#width) {
 		this.#position = new THREE.Vector3(x, 0, y);
@@ -83,7 +89,6 @@ class Track extends GameEntity {
 			.pathTo(600, 100)
 			.pathTo(100, 100)
 			.done();
-
 		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 100));
 	}
 
@@ -99,6 +104,20 @@ class Track extends GameEntity {
 			.pathTo(200, 100)
 			.done();
 		return new Track(700, 700, segments, new THREE.Vector3(100, 0, 300));
+	}
+
+	static trackB() {
+		let segments = new SegmentCreator()
+			.lineAt(100, 200, 100, 900, 30) // forward 800
+			.lineAt(200, 1000, 400, 1000) // left 200
+			.lineAt(500, 900, 500, 800) // down 100
+			.lineAt(400, 700, 300, 700) // right 100
+			.lineAt(200, 600, 200, 500) // down 100
+			.lineAt(300, 400, 400, 400) // left 100
+			.lineAt(500, 300, 500, 200) // down 100
+			.lineAt(400, 100, 200, 100)  // right 200
+			.done();
+		return new Track(1100, 1100, segments, new THREE.Vector3(100, 0, 300));
 	}
 
 	static createMesh(width, length, segments) {

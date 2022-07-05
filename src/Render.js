@@ -23,12 +23,6 @@ class Render {
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 
-		let light1 = new THREE.PointLight(0xffffff, 1, 0);
-		light1.position.set(0, 30, 0);
-		this.scene.add(light1);
-		let ambientLight = new THREE.AmbientLight(0xAAAAAA);
-		this.scene.add(ambientLight);
-
 		this.uiScene = new THREE.Scene();
 		this.uiCamera = new THREE.OrthographicCamera(-.5, .5, .5, -.5, 0, 1);
 		this.uiTexture = new DynamicTexture(width, height);
