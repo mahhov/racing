@@ -5,9 +5,9 @@ import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
 import SmoothCamera from '../SmoothCamera.js';
 import Track from '../Track.js';
-import Frame from './Frame.js';
+import UiComponent from '../ui/UiComponent.js';
 
-class GameFrame extends Frame {
+class GameFrame extends UiComponent {
 	#scene;
 	#track;
 	#playerCar;

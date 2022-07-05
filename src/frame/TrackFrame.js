@@ -1,14 +1,14 @@
 import Input from '../Input.js';
-import Frame from './Frame.js';
+import UiComponent from '../ui/UiComponent.js';
 
-class TrackFrame extends Frame {
+class TrackFrame extends UiComponent {
 	constructor(input) {
 		super(input);
 	}
 
 	update() {
-		// if (this.input.getKey('p') === Input.states.PRESSED)
-		// 	this.emit('resume');
+		if (this.input.getKey('p') === Input.states.PRESSED)
+			this.emit('resume');
 	}
 
 	paintUi(ctx, width, height) {
