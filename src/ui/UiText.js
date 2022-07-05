@@ -22,6 +22,10 @@ class UiText extends UiComponent {
 		this.#text = text;
 	}
 
+	set color(color) {
+		this.#color = color;
+	}
+
 	paintUi(ctx, width, height) {
 		ctx.textAlign = this.#textAlign;
 		ctx.fillStyle = this.#color;

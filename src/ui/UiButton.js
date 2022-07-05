@@ -4,13 +4,14 @@ import UiRect from './UiRect.js';
 import UiText from './UiText.js';
 
 class UiButton extends UiComponent {
-	#text;
 	#centerX;
 	#top;
 	#width;
 	#height;
+	#disabled = false;
 	#state = UiButton.states.OFF;
 
+	#text;
 	#rect;
 
 	static states = {
@@ -19,18 +20,29 @@ class UiButton extends UiComponent {
 
 	constructor(input, text, centerX, top, width, height) {
 		super(input);
-		this.#text = text;
 		this.#centerX = centerX;
 		this.#top = top;
 		this.#width = width;
 		this.#height = height;
 
 		this.#rect = this.addUiComponent(new UiRect(centerX - width / 2, top, width, height, '#000', '#fff'));
-		this.addUiComponent(new UiText(text, centerX, top + height, 'center', '#fff'));
+		this.#text = this.addUiComponent(new UiText(text, centerX, top + height, 'center', '#fff'));
+	}
+
+	set disabled(disabled) {
+		this.#disabled = disabled;
 	}
 
 	update() {
 		super.update();
+		if (this.#disabled) {
+			this.#text.color = '#999';
+			this.#rect.fillColor = '#333';
+			return;
+		}
+
+		this.#text.color = '#fff';
+
 		let mousePosition = this.input.getMousePosition();
 		let dx = mousePosition[0] - this.#centerX + this.#width / 2;
 		let dy = mousePosition[1] - this.#top;
