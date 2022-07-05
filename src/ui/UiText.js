@@ -8,7 +8,7 @@ class UiText extends UiComponent {
 	#color;
 	#font;
 
-	constructor(text, left, bottom, textAlign, color, font) {
+	constructor(text, left, bottom, textAlign, color, font = '20px arial') {
 		super();
 		this.#text = text;
 		this.#left = left;

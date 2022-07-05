@@ -6,6 +6,7 @@ import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
 import SmoothCamera from '../SmoothCamera.js';
 import UiComponent from '../ui/UiComponent.js';
+import UiText from '../ui/UiText.js';
 
 class GameFrame extends UiComponent {
 	#scene;
@@ -19,10 +20,13 @@ class GameFrame extends UiComponent {
 	#entities = [];
 	#addedEntities = [];
 
+	#endText ;
+
 	constructor(input, scene, camera, fixedCamera) {
 		super(input);
 		this.#scene = scene;
 		this.#camera = fixedCamera ? new FixedCamera(camera) : new SmoothCamera(camera);
+		this.#endText = new UiText('', .5, .5, 'center', '#fff')
 	}
 
 	reset(track) {
@@ -36,9 +40,9 @@ class GameFrame extends UiComponent {
 		this.#track = track;
 		this.#intersectionManager = new IntersectionManager(this.#track);
 		this.#scene.add(this.#track.mesh);
-		this.#playerCar = new Car(this, this.#intersectionManager, new LapManager(2), this.input, this.#track.startPosition.clone());
+		this.#playerCar = new Car(this, this.#intersectionManager, new LapManager(1), this.input, this.#track.startPosition.clone());
 		this.#scene.add(this.#playerCar.mesh);
-		this.#opponentCar = new Car(this, this.#intersectionManager, new LapManager(2), null, this.#track.startPosition.clone());
+		this.#opponentCar = new Car(this, this.#intersectionManager, new LapManager(1), null, this.#track.startPosition.clone());
 		this.#scene.add(this.#opponentCar.mesh);
 
 		this.#entities.push(this.#playerCar);
@@ -56,13 +60,20 @@ class GameFrame extends UiComponent {
 		if (this.input.getKey('p') === Input.states.PRESSED)
 			this.emit('pause');
 
-		this.#entities = this.#entities.filter(entity => {
-			if (!entity.update())
-				return true;
-			else if (entity.mesh)
-				this.#scene.remove(entity.mesh);
-		}).concat(this.#addedEntities);
-		this.#addedEntities = [];
+		if (this.#playerCar.done)
+			console.log('win');
+		else if (this.#opponentCar.done)
+			console.log('lose');
+
+		else {
+			this.#entities = this.#entities.filter(entity => {
+				if (!entity.update())
+					return true;
+				else if (entity.mesh)
+					this.#scene.remove(entity.mesh);
+			}).concat(this.#addedEntities);
+			this.#addedEntities = [];
+		}
 	}
 
 	paint() {

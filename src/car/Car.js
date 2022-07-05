@@ -56,6 +56,14 @@ class Car extends GameEntity {
 		return group;
 	}
 
+	get position() {
+		return this.#position.clone();
+	}
+
+	get done() {
+		return this.#lapManager.lap === this.#lapManager.maxLap;
+	}
+
 	update() {
 		if (this.#input)
 			this.#controls.updatePlayer(this.#input);
@@ -117,10 +125,6 @@ class Car extends GameEntity {
 	paintUi(ctx, width, height) {
 		if (this.#input)
 			this.#lapManager.paintUi(ctx, width, height);
-	}
-
-	get position() {
-		return this.#position.clone();
 	}
 }
 
