@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import GameEntity from './GameEntity.js';
 import DynamicTexture from './util/DynamicTexture.js';
+import {meshFromVectors, rect} from './util/GeometryCreator.js';
 import {radian, UP} from './util/util.js';
 
 class Segment {
@@ -37,25 +38,31 @@ class SegmentCreator {
 	#position;
 	#width;
 
-	lineAt(x, y, x2, y2, width = this.#width) {
-		this.moveTo(x, y, width);
-		this.pathTo(x2, y2, width);
+	lineAt(x, z, x2, z2, width = this.#width) {
+		this.moveTo(x, 0, z, width);
+		this.pathTo(x2, 0, z2, width);
 		return this;
 	}
 
-	moveTo(x, y, width = this.#width) {
-		this.#position = new THREE.Vector3(x, 0, y);
+	vertLineAt(x, y, z, x2, y2, z2, width = this.#width) {
+		this.moveTo(x, y, z, width);
+		this.pathTo(x2, y2, z2, width);
+		return this;
+	}
+
+	moveTo(x, y, z, width = this.#width) {
+		this.#position = new THREE.Vector3(x, y, z);
 		this.#width = width;
 		return this;
 	}
 
-	pathTo(x, y, width = this.#width) {
-		let newSegment = Segment.fromLine(this.#position, new THREE.Vector3(x, 0, y), this.#width, width);
+	pathTo(x, y, z, width = this.#width) {
+		let newSegment = Segment.fromLine(this.#position, new THREE.Vector3(x, y, z), this.#width, width);
 		let lastSegment = this.#segments[this.#segments.length - 1];
 		if (lastSegment)
 			this.#segments.push(Segment.connectSegments(lastSegment, newSegment));
 		this.#segments.push(newSegment);
-		return this.moveTo(x, y, width);
+		return this.moveTo(x, y, z, width);
 	}
 
 	done() {
@@ -72,23 +79,18 @@ class Track extends GameEntity {
 	texture;
 
 	constructor(width, length, segments, startPosition) {
-		let texture = Track.createTexture(width, length, segments);
-		super(Track.createMesh(width, length, texture));
-		this.texture = texture;
+		super(Track.createMesh(width, length, segments));
+		this.texture = Track.createTexture(width, length, segments);
 		this.segments = segments;
 		this.startPosition = startPosition;
 	}
 
 	static trackSquare() {
 		let segments = new SegmentCreator()
-			.moveTo(100, 200, 30)
-			.pathTo(100, 500)
-			.moveTo(200, 600)
-			.pathTo(500, 600)
-			.moveTo(600, 500)
-			.pathTo(600, 200)
-			.moveTo(500, 100)
-			.pathTo(200, 100)
+			.lineAt(100, 200, 100, 500, 30)
+			.lineAt(200, 600, 500, 600)
+			.lineAt(600, 500, 600, 200)
+			.lineAt(500, 100, 200, 100)
 			.done();
 		return new Track(700, 700, segments, new THREE.Vector3(100, 0, 300));
 	}
@@ -109,22 +111,18 @@ class Track extends GameEntity {
 
 	static trackX() {
 		let segments = new SegmentCreator()
-			.lineAt(100, 200, 600, 700, 30)
-			.lineAt(500, 800, 200, 800)
-			.lineAt(100, 700, 600, 200)
-			.lineAt(500, 100, 200, 100)
+			.lineAt(100, 200, 100, 600, 30)
+			.vertLineAt(200, 0, 700, 1200, 100, 700)
+			.lineAt(1300, 800, 1300, 1200)
+			.lineAt(1200, 1300, 800, 1300)
+			.lineAt(700, 1200, 700, 200)
+			.lineAt(600, 100, 200, 100)
 			.done();
-		return new Track(900, 900, segments, new THREE.Vector3(200, 0, 300));
+		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 300));
 	}
 
 	static createTexture(width, length, segments) {
-		let SQUARE_SIZE = 10;
-		let texture = new DynamicTexture(width, length);
-		texture.ctx.fillStyle = '#f00';
-		for (let x = 0; x < width / SQUARE_SIZE; x++)
-			for (let y = 0; y < length / SQUARE_SIZE; y++)
-				if ((x + y) % 2)
-					texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+		let texture = Track.createTextureCheck(width, length);
 
 		texture.ctx.fillStyle = '#00f';
 		segments.forEach((segment, i) => {
@@ -149,11 +147,31 @@ class Track extends GameEntity {
 		return texture;
 	}
 
-	static createMesh(width, length, texture) {
+	static createMesh(width, length, segments) {
+		let group = new THREE.Group();
 		let geometry = new THREE.PlaneGeometry(width, length);
 		geometry.lookAt(new THREE.Vector3(0, 1, 0));
-		geometry.translate(width / 2, 0, length / 2);
-		return new THREE.Mesh(geometry, texture.phongMaterial);
+		geometry.translate(width / 2, -1, length / 2);
+		group.add(new THREE.Mesh(geometry, Track.createTextureCheck(width, length).phongMaterial));
+
+		segments.forEach((segment, i) => {
+			let material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, color: 155 + Math.floor(100 * i / segments.length)});
+			let segmentMesh = meshFromVectors(rect(segment.left1.toArray(), segment.right1.toArray(), segment.right2.toArray(), segment.left2.toArray()), material);
+			group.add(segmentMesh);
+		});
+
+		return group;
+	}
+
+	static createTextureCheck(width, length) {
+		let SQUARE_SIZE = 10;
+		let texture = new DynamicTexture(width, length);
+		texture.ctx.fillStyle = '#f00';
+		for (let x = 0; x < width / SQUARE_SIZE; x++)
+			for (let y = 0; y < length / SQUARE_SIZE; y++)
+				if ((x + y) % 2)
+					texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+		return texture;
 	}
 }
 

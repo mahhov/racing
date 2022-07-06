@@ -58,6 +58,7 @@ const meshFromVectors = (vertices, material) => {
 
 export {
 	TrapezoidParams,
+	rect,
 	trapezoid,
 	cube,
 	meshFromVectors,
