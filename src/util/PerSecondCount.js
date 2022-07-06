@@ -11,7 +11,7 @@ class PerSecondCount extends GameEntity {
 	constructor(line, prefixText) {
 		super();
 		this.#prefixText = prefixText;
-		this.#text = this.addUiComponent(new UiText('', .05, .05 + .03 * line, 'left', '#fff'));
+		this.#text = this.addUiComponent(new UiText('', .05, .05 + .03 * line, 'left', 'bottom', '#fff'));
 	}
 
 	add() {

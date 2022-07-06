@@ -4,16 +4,18 @@ class UiText extends UiComponent {
 	#text;
 	#left;
 	#textAlign;
+	#textVertAlign;
 	#bottom;
 	#color;
 	#font;
 
-	constructor(text, left, bottom, textAlign, color, font = '20px arial') {
+	constructor(text, left, bottom, textAlign, textVertAlign, color, font = '20px arial') {
 		super();
 		this.#text = text;
 		this.#left = left;
 		this.#bottom = bottom;
-		this.#textAlign = textAlign;
+		this.#textAlign = textAlign; // left, right, center
+		this.#textVertAlign = textVertAlign; // top, middle, bottom
 		this.#color = color;
 		this.#font = font;
 	}
@@ -28,6 +30,7 @@ class UiText extends UiComponent {
 
 	paintUi(ctx, width, height) {
 		ctx.textAlign = this.#textAlign;
+		ctx.textBaseline = this.#textVertAlign;
 		ctx.fillStyle = this.#color;
 		ctx.font = this.#font;
 		ctx.fillText(this.#text, this.#left * width, this.#bottom * height);

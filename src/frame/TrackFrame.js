@@ -17,8 +17,8 @@ class TrackFrame extends UiComponent {
 			button.addListener('click', () => this.emit('select', trackInfo));
 			button.disabled = !save.tracksUnlocked[i];
 		});
-		this.addUiComponent(new UiText('Select track', .5, .2, 'center', '#fff', '60px arial'));
-		this.#helpText = this.addUiComponent(new UiText('', .5, .56, 'center', '#fff'));
+		this.addUiComponent(new UiText('Select track', .5, .2, 'center', 'bottom', '#fff', '60px arial'));
+		this.#helpText = this.addUiComponent(new UiText('', .5, .56, 'center', 'bottom', '#fff'));
 		this.#preview = this.addUiComponent(new UiImage(.35, .6, .3, .3));
 	}
 

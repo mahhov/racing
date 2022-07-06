@@ -12,8 +12,8 @@ class LapManager extends GameEntity {
 	constructor(maxLap) {
 		super();
 		this.maxLap = maxLap;
-		this.#lapText = this.addUiComponent(new UiText('', .95, .05, 'right', '#fff'));
-		this.#timeText = this.addUiComponent(new UiText('', .95, .08, 'right', '#fff'));
+		this.#lapText = this.addUiComponent(new UiText('', .95, .05, 'right', 'bottom', '#fff'));
+		this.#timeText = this.addUiComponent(new UiText('', .95, .08, 'right', 'bottom', '#fff'));
 	}
 
 	addLap(delta) {
