@@ -7,7 +7,7 @@ class TrapezoidParams {
 
 	constructor(backLeft, deltaX, deltaZ) {
 		this.backLeft = backLeft;
-		this.deltaX = [deltaX, 0, 0];
+		this.deltaX = [-deltaX, 0, 0];
 		this.deltaZ = [0, 0, deltaZ];
 	}
 
@@ -52,7 +52,6 @@ const meshFromVectors = (vertices, material) => {
 	vertices = new Float32Array(vertices);
 	let geometry = new THREE.BufferGeometry();
 	geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-	geometry.scale(-1, 1, 1);
 	geometry.computeVertexNormals();
 	return new THREE.Mesh(geometry, material);
 };
