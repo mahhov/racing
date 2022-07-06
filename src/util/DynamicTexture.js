@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 
 class DynamicTexture {
+	#canvas;
 	#ctx;
 	#texture;
 
 	constructor(width, height) {
-		let canvas = new OffscreenCanvas(width, height);
-		this.#ctx = canvas.getContext('2d');
-		this.#texture = new THREE.Texture(canvas);
+		this.#canvas = new OffscreenCanvas(width, height);
+		this.#ctx = this.#canvas.getContext('2d');
+		this.#texture = new THREE.Texture(this.#canvas);
 		this.#texture.magFilter = THREE.NearestFilter;
 		this.#texture.minFilter = THREE.NearestFilter;
 	}
@@ -15,6 +16,10 @@ class DynamicTexture {
 	get ctx() {
 		this.#texture.needsUpdate = true;
 		return this.#ctx;
+	}
+
+	get canvas() {
+		return this.#canvas;
 	}
 
 	get phongMaterial() {

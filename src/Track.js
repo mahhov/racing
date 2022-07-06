@@ -69,9 +69,12 @@ class SegmentCreator {
 class Track extends GameEntity {
 	segments;
 	startPosition;
+	texture;
 
 	constructor(width, length, segments, startPosition) {
-		super(Track.createMesh(width, length, segments));
+		let texture = Track.createTexture(width, length, segments);
+		super(Track.createMesh(width, length, texture));
+		this.texture = texture;
 		this.segments = segments;
 		this.startPosition = startPosition;
 	}
@@ -120,7 +123,7 @@ class Track extends GameEntity {
 		return new Track(1100, 1100, segments, new THREE.Vector3(100, 0, 300));
 	}
 
-	static createMesh(width, length, segments) {
+	static createTexture(width, length, segments) {
 		let SQUARE_SIZE = 10;
 		let texture = new DynamicTexture(width, length);
 		texture.ctx.fillStyle = '#f00';
@@ -149,6 +152,10 @@ class Track extends GameEntity {
 			texture.ctx.stroke();
 		});
 
+		return texture;
+	}
+
+	static createMesh(width, length, texture) {
 		let geometry = new THREE.PlaneGeometry(width, length);
 		geometry.lookAt(new THREE.Vector3(0, 1, 0));
 		geometry.translate(width / 2, 0, length / 2);
