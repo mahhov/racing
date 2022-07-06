@@ -28,8 +28,16 @@ class UiRect extends UiComponent {
 			ctx.fillRect(this.#left * width, this.#top * height, this.#width * width, this.#height * height);
 		}
 		if (this.#outlineColor) {
-			ctx.strokeStyle = this.#outlineColor;
-			ctx.strokeRect(this.#left * width, this.#top * height, this.#width * width, this.#height * height);
+			ctx.fillStyle = this.#outlineColor;
+			let l = this.#left * width;
+			let t = this.#top * height;
+			let w = this.#width * width;
+			let h = this.#height * height;
+			let thickness = 2;
+			ctx.fillRect(l - thickness, t, thickness, h); // left
+			ctx.fillRect(l, t - thickness, w, thickness); // top
+			ctx.fillRect(l + w, t, thickness, h); // right
+			ctx.fillRect(l, t + h, w, thickness); // bottom
 		}
 	}
 }

@@ -17,6 +17,11 @@ class EndFrame extends UiComponent {
 			.addListener('click', () => this.emit('back'));
 	}
 
+	update() {
+		this.#gameFrame.update();
+		super.update();
+	}
+
 	setEnd(win) {
 		this.#text.text = win ? 'Victory' : 'Loss';
 	}

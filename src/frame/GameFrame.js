@@ -15,6 +15,7 @@ class GameFrame extends UiComponent {
 	#playerCar;
 	#opponentCar;
 	#intersectionManager;
+	#done;
 
 	#entities;
 	#addedEntities;
@@ -42,6 +43,7 @@ class GameFrame extends UiComponent {
 		this.#opponentCar = new Car(this, this.#intersectionManager, new LapManager(1), null, this.#track.startPosition.clone());
 		this.#scene.add(this.#opponentCar.mesh);
 
+		this.#done = false;
 		this.#entities = [];
 		this.#addedEntities = [];
 		this.#entities.push(this.#playerCar);
@@ -59,21 +61,21 @@ class GameFrame extends UiComponent {
 		if (this.input.getKey('p') === Input.states.PRESSED)
 			this.emit('pause');
 
-
-		if (this.#playerCar.done)
-			this.emit('end', true);
-		else if (this.#opponentCar.done)
-			this.emit('end', false);
-
-		else {
-			this.#entities = this.#entities.filter(entity => {
-				if (!entity.update())
-					return true;
-				else if (entity.mesh)
-					this.#scene.remove(entity.mesh);
-			}).concat(this.#addedEntities);
-			this.#addedEntities = [];
+		if (!this.#done && this.#playerCar.done || this.#opponentCar.done) {
+			this.#done = true;
+			if (this.#playerCar.done)
+				this.emit('end', true);
+			else
+				this.emit('end', false);
 		}
+
+		this.#entities = this.#entities.filter(entity => {
+			if (!entity.update())
+				return true;
+			else if (entity.mesh)
+				this.#scene.remove(entity.mesh);
+		}).concat(this.#addedEntities);
+		this.#addedEntities = [];
 
 		this.#camera.follow(this.#playerCar.position);
 	}

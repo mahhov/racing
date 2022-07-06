@@ -25,3 +25,6 @@ class Save {
 }
 
 export default Save;
+
+// to reset:
+// new Save().save();
