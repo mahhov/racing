@@ -61,7 +61,7 @@ class GameFrame extends UiComponent {
 		if (this.input.getKey('p') === Input.states.PRESSED)
 			this.emit('pause');
 
-		if (!this.#done && this.#playerCar.done || this.#opponentCar.done) {
+		if (!this.#done && (this.#playerCar.done || this.#opponentCar.done)) {
 			this.#done = true;
 			if (this.#playerCar.done)
 				this.emit('end', true);
