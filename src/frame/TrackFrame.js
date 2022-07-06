@@ -20,7 +20,7 @@ class TrackFrame extends UiComponent {
 		this.addUiComponent(new UiButton(input, 'Editor', .15, .9))
 			.addListener('click', () => this.emit('editor'));
 		this.#helpText = this.addUiComponent(new UiText('', .5, .56, 'center', 'bottom', '#fff'));
-		this.#preview = this.addUiComponent(new UiImage(.35, .6, .3, .3));
+		this.#preview = this.addUiComponent(new UiImage(null, .35, .6, .3, .3));
 	}
 
 	update() {

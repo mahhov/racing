@@ -40,11 +40,8 @@ class UiButton extends UiComponent {
 	update() {
 		super.update();
 
-		let mousePosition = this.input.getMousePosition();
-		let dx = mousePosition[0] - this.#centerX + this.#width / 2;
-		let dy = mousePosition[1] - this.#top;
-		if (dx > 0 && dx < this.#width && dy > 0 && dy < this.#height)
-			this.#state = this.input.getMouseState() === Input.states.PRESSED && !this.#disabled ?
+		if (UiComponent.mouseIn(this.input, this.#centerX - this.#width / 2, this.#top, this.#width, this.#height))
+			this.#state = this.input.getMouseState(0) === Input.states.PRESSED && !this.#disabled ?
 				UiButton.states.CLICK : UiButton.states.HOVER;
 		else
 			this.#state = UiButton.states.OFF;

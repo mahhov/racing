@@ -6,7 +6,7 @@ class Input {
 	};
 
 	#keys = {};
-	#mouseState = Input.states.UP;
+	#mouseStates = {};
 	#mousePosition = [0, 0];
 
 	constructor(canvas) {
@@ -16,6 +16,7 @@ class Input {
 		canvas.addEventListener('mousedown', e => this.#mouseDown(e));
 		canvas.addEventListener('mouseup', e => this.#mouseUp(e));
 		canvas.addEventListener('mousemove', e => this.#mouseMove(e));
+		document.addEventListener('contextmenu', e => e.preventDefault());
 	}
 
 	#keyDown(e) {
@@ -28,11 +29,11 @@ class Input {
 	}
 
 	#mouseDown(e) {
-		this.#mouseState = Input.states.PRESSED;
+		this.#mouseStates[e.button] = Input.states.PRESSED;
 	}
 
 	#mouseUp(e) {
-		this.#mouseState = Input.states.RELEASED;
+		this.#mouseStates[e.button] = Input.states.RELEASED;
 	}
 
 	#mouseMove(e) {
@@ -42,7 +43,8 @@ class Input {
 	update() {
 		Object.entries(this.#keys).forEach(([key, state]) =>
 			this.#keys[key] = Input.updateState(state));
-		this.#mouseState = Input.updateState(this.#mouseState);
+		Object.entries(this.#mouseStates).forEach(([button, state]) =>
+			this.#mouseStates[button] = Input.updateState(state));
 	}
 
 	static updateState(state) {
@@ -57,8 +59,9 @@ class Input {
 		return Input.getState(this.#keys[key], asBool);
 	}
 
-	getMouseState(asBool = false) {
-		return Input.getState(this.#mouseState, asBool);
+	getMouseState(button, asBool = false) {
+		// 0 = left, 1 = middle, 2 = right
+		return Input.getState(this.#mouseStates[button], asBool);
 	}
 
 	static getState(state, asBool) {

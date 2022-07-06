@@ -7,8 +7,8 @@ class UiImage extends UiComponent {
 	#height;
 	#texture;
 
-	constructor(left, top, width, height) {
-		super();
+	constructor(input, left, top, width, height) {
+		super(input);
 		this.#left = left;
 		this.#top = top;
 		this.#width = width;
@@ -17,6 +17,14 @@ class UiImage extends UiComponent {
 
 	set texture(texture) {
 		this.#texture = texture;
+	}
+
+	update() {
+		if (this.input) {
+			let mouseCoord = UiComponent.mouseIn(this.input, this.#left, this.#top, this.#width, this.#height);
+			if (mouseCoord)
+				this.emit('mouse', mouseCoord);
+		}
 	}
 
 	paintUi(ctx, width, height) {
