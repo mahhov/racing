@@ -27,16 +27,25 @@ class TrackEditorFrame extends UiComponent {
 			this.#curCoord = mouseCoord;
 			if (this.input.getMouseState(0) === Input.states.PRESSED)
 				this.#downCoord = mouseCoord;
-			else if (this.input.getMouseState(0) === Input.states.RELEASED) {
+			else if (this.input.getMouseState(0) === Input.states.RELEASED && !TrackEditorFrame.sameCoord(this.#downCoord, mouseCoord)) {
 				this.#lines.push([this.#downCoord, mouseCoord]);
 				this.#downCoord = null;
 			}
 			if (this.input.getMouseState(2, true))
 				this.#lines = this.#lines.filter(line =>
-					line.every(xy => xy.some((c, i) => c !== mouseCoord[i])));
+					!line.some(xy => TrackEditorFrame.sameCoord(xy, mouseCoord)));
 		});
-		this.addUiComponent(new UiButton(input, 'Back', .5, .92))
+		this.addUiComponent(new UiButton(input, 'Back', .2, .92))
 			.addListener('click', () => this.emit('back'));
+		this.addUiComponent(new UiButton(input, 'Clear', .5, .92))
+			.addListener('click', () => this.#lines = []);
+		this.addUiComponent(new UiButton(input, 'Export', .8, .92))
+			.addListener('click', () =>
+				console.log(this.#lines.map(line => `.lineAt(${line.flat().map(c => (this.#gridSize - c) * 100).join(', ')})`).join('\n')));
+	}
+
+	static sameCoord(coord1, coord2) {
+		return coord1.every((c, i) => c === coord2[i]);
 	}
 
 	update() {
