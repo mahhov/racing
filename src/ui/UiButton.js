@@ -18,7 +18,7 @@ class UiButton extends UiComponent {
 		OFF: 0, HOVER: 1, CLICK: 2,
 	};
 
-	constructor(input, text, centerX, top, width, height) {
+	constructor(input, text, centerX, top, width = .2, height = .04) {
 		super(input);
 		this.#centerX = centerX;
 		this.#top = top;

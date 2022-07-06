@@ -13,7 +13,7 @@ class EndFrame extends UiComponent {
 
 		this.addUiComponent(new UiRect(0, 0, 1, 1, 'rgba(0,0,0,.5)', null));
 		this.#text = this.addUiComponent(new UiText('', .5, .35, 'center', 'bottom', '#fff', '60px arial'));
-		this.addUiComponent(new UiButton(input, 'Back', .5, .4, .2, .04))
+		this.addUiComponent(new UiButton(input, 'Back', .5, .4))
 			.addListener('click', () => this.emit('back'));
 	}
 

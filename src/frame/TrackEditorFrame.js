@@ -4,7 +4,7 @@ import UiComponent from '../ui/UiComponent.js';
 import UiImage from '../ui/UiImage.js';
 import UiText from '../ui/UiText.js';
 
-class TrackFrame extends UiComponent {
+class TrackEditorFrame extends UiComponent {
 	#save;
 	#helpText;
 	#preview;
@@ -28,7 +28,7 @@ class TrackFrame extends UiComponent {
 		this.#helpText.text = '';
 		this.#preview.texture = null;
 		TRACK_INFOS.forEach((trackInfo, i) => {
-			this.uiComponents[i].disabled = !this.#save.tracksUnlocked[i];
+			// this.uiComponents[i].disabled = !this.#save.tracksUnlocked[i];
 			if (this.uiComponents[i].active) {
 				this.#helpText.text = this.#save.tracksUnlocked[i] ?
 					`Reward: ${trackInfo.currencyReward}` :
@@ -39,4 +39,4 @@ class TrackFrame extends UiComponent {
 	}
 }
 
-export default TrackFrame;
+export default TrackEditorFrame;

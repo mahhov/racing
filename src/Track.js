@@ -79,22 +79,6 @@ class Track extends GameEntity {
 		this.startPosition = startPosition;
 	}
 
-	static track1() {
-		let segments = new SegmentCreator()
-			.moveTo(100, 100, 50)
-			.pathTo(100, 1200)
-			.pathTo(800, 1300)
-			.pathTo(1300, 1200)
-			.pathTo(800, 900)
-			.pathTo(300, 800)
-			.pathTo(300, 600)
-			.pathTo(800, 400)
-			.pathTo(600, 100)
-			.pathTo(100, 100)
-			.done();
-		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 100));
-	}
-
 	static trackSquare() {
 		let segments = new SegmentCreator()
 			.moveTo(100, 200, 30)
@@ -121,6 +105,16 @@ class Track extends GameEntity {
 			.lineAt(400, 100, 200, 100)  // right 200
 			.done();
 		return new Track(1100, 1100, segments, new THREE.Vector3(100, 0, 300));
+	}
+
+	static trackX() {
+		let segments = new SegmentCreator()
+			.lineAt(100, 200, 600, 700, 30)
+			.lineAt(500, 800, 200, 800)
+			.lineAt(100, 700, 600, 200)
+			.lineAt(500, 100, 200, 100)
+			.done();
+		return new Track(900, 900, segments, new THREE.Vector3(200, 0, 300));
 	}
 
 	static createTexture(width, length, segments) {
