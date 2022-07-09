@@ -20,7 +20,7 @@ class Segment {
 	static fromLine(p1, p2, w1, w2) {
 		const SMOOTHNESS = .3;
 		let dir = p2.clone().sub(p1).normalize();
-		let dir90 = dir.clone().applyAxisAngle(UP, radian(90));
+		let dir90 = dir.clone().projectOnPlane(UP).applyAxisAngle(UP, radian(90));
 		let left1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, w1);
 		let right1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, -w1);
 		let left2 = p2.clone().addScaledVector(dir, -w2 * SMOOTHNESS).addScaledVector(dir90, w2);

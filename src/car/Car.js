@@ -6,8 +6,11 @@ import {clamp, radian, rand, UP} from '../util/util.js';
 import Controls from './Controls.js';
 
 const FRICTION = .03;
+const BRAKE = .05;
 const ACCELERATION = .1;
 const TURN = radian(2);
+const GRAVITY = -.02;
+const AIR_FRICTION = .01;
 
 class Car extends GameEntity {
 	#game;
@@ -19,7 +22,6 @@ class Car extends GameEntity {
 	#position;
 	#velocity = new THREE.Vector3();
 	#direction = new THREE.Vector3(0, 0, 1);
-	#wheelDirection = new THREE.Vector3(0, 0, 1);
 
 	constructor(game, intersectionManager, lapManager, input, startPosition) {
 		super(Car.createMesh());
@@ -64,30 +66,35 @@ class Car extends GameEntity {
 		return this.#lapManager.lap === this.#lapManager.maxLap;
 	}
 
-	update() {
+	#updateControls() {
 		if (this.#input)
 			this.#controls.updatePlayer(this.#input);
 		else
 			this.#controls.updateAi(this.#position, this.#velocity, this.#direction, this.#intersectionManager);
-
-		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1);
-
 		if (this.#controls.forward < 0)
 			this.#controls.right *= -1;
-		if (this.#controls.brake)
-			turnSpeed *= 1.5;
+	}
 
-		this.#wheelDirection = -radian(30) * this.#controls.right;
+	#groundVelocityUpdate() {
+		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
+		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right);
 
-		this.#direction.applyAxisAngle(UP, -turnSpeed * this.#controls.right);
-
-		let decelerate = 1 - FRICTION - (this.#controls.brake ? .05 : 0);
+		let accelerate = ACCELERATION * this.#controls.forward;
+		let decelerate = FRICTION + (this.#controls.brake ? BRAKE : 0);
 		this.#velocity
-			.addScaledVector(this.#direction, ACCELERATION * this.#controls.forward)
-			.addScaledVector(this.#direction, this.#velocity.length() * (1 - decelerate) / 2)
-			.multiplyScalar(decelerate);
+			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2)
+			.multiplyScalar(1 - decelerate);
+		// todo gravity for tilted ground
+	}
 
-		let intersection = this.#intersectionManager.canMove(this.#position, this.#velocity);
+	#airVelocityUpdate() {
+		this.#velocity
+			.add(new THREE.Vector3(0, GRAVITY, 0))
+			.multiplyScalar(1 - AIR_FRICTION);
+		// todo gliding and turning
+	}
+
+	#applyVelocity(intersection) {
 		if (!intersection.position)
 			this.#position.add(this.#velocity);
 		else {
@@ -95,10 +102,14 @@ class Car extends GameEntity {
 			this.#velocity.sub(v1).multiplyScalar(-.2).addScaledVector(v1, .7);
 			this.#direction = v1.normalize();
 		}
+	}
 
-		this.#lapManager.addLap(intersection.lapped);
-		this.#lapManager.update();
+	#getGroundY() {
+		return this.#position.z < 300 ? 0 : 5;
+		// todo
+	}
 
+	#addParticles(intersection) {
 		let particleCount =
 			(this.#controls.brake ? Math.floor(this.#velocity.length()) : 0) +
 			(this.#controls.forward ? 3 : 0) +
@@ -109,14 +120,39 @@ class Car extends GameEntity {
 			this.#game.addEntity(new Particle(
 				this.#position.clone()
 					.addScaledVector(this.#direction, rand(1) - 3.5)
-					.addScaledVector(this.#direction.clone().applyAxisAngle(UP, radian(90)), rand(3) - 1.5)
+					.addScaledVector(this.#direction.clone().applyAxisAngle(this.#dirUp, radian(90)), rand(3) - 1.5)
 					.add(new THREE.Vector3(0, 1, 0)),
 				new THREE.Vector3(rand(particleSpeed) - particleSpeed / 2, rand(particleSpeed) - particleSpeed / 2, rand(particleSpeed) - particleSpeed / 2), 100, .4, '#888'));
+	}
 
+	#updateMesh() {
 		this.mesh.position.copy(this.#position);
 		this.mesh.lookAt(this.#position.clone().add(this.#direction));
-		this.mesh.children[3].rotation.y = this.#wheelDirection;
-		this.mesh.children[4].rotation.y = this.#wheelDirection;
+		let wheelDirection = -radian(30) * this.#controls.right;
+		this.mesh.children[3].rotation.y = wheelDirection;
+		this.mesh.children[4].rotation.y = wheelDirection;
+	}
+
+	get #dirUp() {
+		return this.#direction.clone().cross(UP).cross(this.#direction);
+	}
+
+	update() {
+		this.#updateControls();
+		if (this.#position.y <= this.#getGroundY())
+			this.#groundVelocityUpdate();
+		else
+			this.#airVelocityUpdate();
+		let intersection = this.#intersectionManager.canMove(this.#position, this.#velocity);
+		this.#applyVelocity(intersection);
+
+		this.#position.y = Math.max(this.#position.y, this.#getGroundY());
+
+		this.#lapManager.addLap(intersection.lapped);
+		this.#lapManager.update();
+
+		this.#addParticles(intersection);
+		this.#updateMesh();
 	}
 
 	paintUi(ctx, width, height) {
