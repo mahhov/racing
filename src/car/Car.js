@@ -100,10 +100,9 @@ class Car extends GameEntity {
 		if (!intersection.intersected)
 			this.#position.add(this.#velocity);
 		else {
-			// todo when going backwards, direction is flipped
 			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
 			this.#velocity.sub(v1).multiplyScalar(-.2).addScaledVector(v1, .7);
-			this.#direction = v1.normalize();
+			this.#direction.projectOnVector(intersection.direction).normalize();
 		}
 	}
 
