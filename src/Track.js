@@ -10,11 +10,19 @@ class Segment {
 	left2;
 	right2;
 
+	left;
+	bottom;
+	normal;
+
 	constructor(left1, right1, left2, right2) {
 		this.left1 = left1;
 		this.right1 = right1;
 		this.left2 = left2;
 		this.right2 = right2;
+
+		this.left = this.subLeft1(this.left2);
+		this.bottom = this.subLeft1(this.right1);
+		this.normal = this.left.clone().cross(this.bottom).normalize();
 	}
 
 	static fromLine(p1, p2, w1, w2) {

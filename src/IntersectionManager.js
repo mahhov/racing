@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import {UP} from './util/util.js';
 
 class Intersection {
 	intersected; // whether there was an intersection
@@ -49,17 +48,15 @@ class IntersectionManager {
 	}
 
 	static #lineProjectedHorizontal(...vectors) {
-		return new THREE.Line3(...vectors.map(vector => vector.clone().projectOnPlane(UP)));
+		return new THREE.Line3(...vectors.map(vector => vector.clone().setComponent(1, 0)));
 	}
 
 	#getGround(horizPosition, trackSegmentIndex) {
 		let segment = this.#track.segments[trackSegmentIndex];
-		let left = segment.subLeft1(segment.left2);
-		let bottom = segment.subLeft1(segment.right1);
 		horizPosition = segment.subLeft1(horizPosition);
-		let leftLength = horizPosition.clone().projectOnVector(left).length() / left.length();
-		let bottomLength = horizPosition.clone().projectOnVector(bottom).length() / bottom.length();
-		return segment.left1.y + leftLength * left.y + bottomLength * bottom.y;
+		let leftLength = horizPosition.clone().projectOnVector(segment.left).length() / segment.left.length();
+		let bottomLength = horizPosition.clone().projectOnVector(segment.bottom).length() / segment.bottom.length();
+		return segment.left1.y + leftLength * segment.left.y + bottomLength * segment.bottom.y;
 	}
 
 	canMove(position, delta, trackSegmentIndex) {
