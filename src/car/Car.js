@@ -14,6 +14,7 @@ const AIR_FRICTION = .01;
 
 class Car extends GameEntity {
 	#game;
+	#track;
 	#intersectionManager;
 	#lapManager;
 	#input;
@@ -25,9 +26,10 @@ class Car extends GameEntity {
 	#trackSegmentIndex = 0;
 	#grounded = true;
 
-	constructor(game, intersectionManager, lapManager, input, startPosition) {
+	constructor(game, track, intersectionManager, lapManager, input, startPosition) {
 		super(Car.createMesh());
 		this.#game = game;
+		this.#track = track;
 		this.#intersectionManager = intersectionManager;
 		this.#lapManager = lapManager;
 		this.#input = input;
@@ -83,10 +85,12 @@ class Car extends GameEntity {
 
 		let accelerate = ACCELERATION * this.#controls.forward;
 		let decelerate = FRICTION + (this.#controls.brake ? BRAKE : 0);
+		this.#velocity.y = 0;
 		this.#velocity
 			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2)
-			.multiplyScalar(1 - decelerate);
-		// todo gravity for tilted ground
+			.multiplyScalar(1 - decelerate)
+			.add(new THREE.Vector3(0, GRAVITY, 0))
+			.add(new THREE.Vector3(0, GRAVITY, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
 	}
 
 	#airVelocityUpdate() {
@@ -149,8 +153,10 @@ class Car extends GameEntity {
 
 		this.#applyVelocity(intersection);
 
-		if (this.#grounded = this.#position.y <= intersection.groundY)
+		this.#grounded = this.#position.y <= intersection.groundY + 1.5;
+		if (this.#grounded)
 			this.#position.y = intersection.groundY;
+		// todo why is velocity higher when sliding perpendicular
 
 		this.#addParticles(intersection);
 		this.#updateMesh();
