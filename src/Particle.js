@@ -3,6 +3,8 @@ import GameEntity from './GameEntity.js';
 import DynamicTexture from './util/DynamicTexture.js';
 
 class Particle extends GameEntity {
+	static #materialCache = [];
+
 	#velocity;
 	#duration;
 
@@ -14,11 +16,13 @@ class Particle extends GameEntity {
 	}
 
 	static createMesh(size, color) {
-		let texture = new DynamicTexture(1, 1);
-		texture.ctx.fillStyle = color;
-		texture.ctx.fillRect(0, 0, 1, 1);
-		let material = texture.spriteMaterial;
-		let sprite = new THREE.Sprite(material);
+		if (!Particle.#materialCache[color]) {
+			let texture = new DynamicTexture(1, 1);
+			texture.ctx.fillStyle = color;
+			texture.ctx.fillRect(0, 0, 1, 1);
+			Particle.#materialCache[color] = texture.spriteMaterial;
+		}
+		let sprite = new THREE.Sprite(Particle.#materialCache[color]);
 		sprite.scale.set(size, size, 1);
 		return sprite;
 	}
