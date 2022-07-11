@@ -17,9 +17,9 @@ class Particle extends GameEntity {
 
 	static createMesh(size, color) {
 		if (!Particle.#materialCache[color]) {
-			let texture = new DynamicTexture(1, 1);
-			texture.ctx.fillStyle = color;
-			texture.ctx.fillRect(0, 0, 1, 1);
+			let texture = new DynamicTexture(3, 3);
+			texture.ctx.strokeStyle = color;
+			texture.ctx.strokeRect(0, 0, 3, 3);
 			Particle.#materialCache[color] = texture.spriteMaterial;
 		}
 		let sprite = new THREE.Sprite(Particle.#materialCache[color]);
