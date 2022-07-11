@@ -77,7 +77,8 @@ class Car extends GameEntity {
 
 	#groundVelocityUpdate() {
 		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
-		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right);
+		let turnSign = Math.sign(this.#velocity.dot(this.#direction));
+		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right * turnSign);
 		// todo direction tilt
 
 		let accelerate = ACCELERATION * this.#controls.forward;
