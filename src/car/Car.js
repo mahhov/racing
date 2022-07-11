@@ -73,13 +73,12 @@ class Car extends GameEntity {
 			this.#controls.updatePlayer(this.#input);
 		else
 			this.#controls.updateAi(this.#position, this.#velocity, this.#direction, this.#trackSegmentIndex, this.#intersectionManager);
-		if (this.#controls.forward < 0)
-			this.#controls.right *= -1;
 	}
 
 	#groundVelocityUpdate() {
 		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
 		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right);
+		// todo direction tilt
 
 		let accelerate = ACCELERATION * this.#controls.forward;
 		let decelerate = FRICTION + (this.#controls.brake ? BRAKE : 0);
@@ -110,7 +109,7 @@ class Car extends GameEntity {
 		let particleCount =
 			(this.#controls.brake ? Math.floor(this.#velocity.length()) : 0) +
 			(this.#controls.forward ? 3 : 0) +
-			(this.#velocity.length() > .1 ? 1 : 0) +
+			(this.#velocity.length() > .5 ? 1 : 0) +
 			(intersection.intersected ? 50 : 0);
 		let particleSpeed = .08;
 		for (let i = 0; i < particleCount; i++)
