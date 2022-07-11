@@ -4,14 +4,16 @@ import {UP} from './util/util.js';
 class Intersection {
 	intersected; // whether there was an intersection
 	horizPosition; // position vector of the intersection or end of movement if no intersection; y = 0
+	distance; // proportional distance (0 to 1) until intersection; Infinity if no intersection
 	direction; // direction vector of the intersected line; null if no intersection
 	groundY; // y position of track at horizPosition
 	trackSegmentIndex; // trackSegmentIndex
 	lapped; // 0 = no lap, <0 = reverse, >0 = forward
 
-	constructor(intersected, horizPosition, direction) {
+	constructor(intersected, horizPosition, distance, direction) {
 		this.intersected = intersected;
 		this.horizPosition = horizPosition;
+		this.distance = distance;
 		this.direction = direction;
 	}
 }
@@ -43,7 +45,7 @@ class IntersectionManager {
 		if (p1 < 0 || p1 > 1 || p2 < 0 || p2 > 1)
 			return null;
 
-		return new Intersection(true, line1.at(p1, new THREE.Vector3()), delta2);
+		return new Intersection(true, line1.at(p1, new THREE.Vector3()), p1, delta2);
 	}
 
 	static #lineProjectedHorizontal(...vectors) {
@@ -85,8 +87,8 @@ class IntersectionManager {
 					if (trackSegmentIndex === this.#track.segments.length) {
 						trackSegmentIndex = 0;
 						lapped++;
-						continue;
 					}
+					continue;
 				}
 			}
 			if (segmentDirection !== 1) {
@@ -98,11 +100,11 @@ class IntersectionManager {
 					if (trackSegmentIndex === -1) {
 						trackSegmentIndex = this.#track.segments.length - 1;
 						lapped--;
-						continue;
 					}
+					continue;
 				}
 			}
-			let intersection = new Intersection(false, movementLine.at(1, new THREE.Vector3()), null);
+			let intersection = new Intersection(false, movementLine.at(1, new THREE.Vector3()), Infinity, null);
 			intersection.groundY = this.#getGround(intersection.horizPosition, trackSegmentIndex);
 			intersection.trackSegmentIndex = trackSegmentIndex;
 			intersection.lapped = lapped;

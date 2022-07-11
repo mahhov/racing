@@ -72,7 +72,7 @@ class Car extends GameEntity {
 		if (this.#input)
 			this.#controls.updatePlayer(this.#input);
 		else
-			this.#controls.updateAi(this.#position, this.#velocity, this.#direction, this.#intersectionManager);
+			this.#controls.updateAi(this.#position, this.#velocity, this.#direction, this.#trackSegmentIndex, this.#intersectionManager);
 		if (this.#controls.forward < 0)
 			this.#controls.right *= -1;
 	}
@@ -100,6 +100,7 @@ class Car extends GameEntity {
 		if (!intersection.intersected)
 			this.#position.add(this.#velocity);
 		else {
+			// todo when going backwards, direction is flipped
 			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
 			this.#velocity.sub(v1).multiplyScalar(-.2).addScaledVector(v1, .7);
 			this.#direction = v1.normalize();
@@ -141,15 +142,16 @@ class Car extends GameEntity {
 		else
 			this.#airVelocityUpdate();
 		let intersection = this.#intersectionManager.canMove(this.#position, this.#velocity, this.#trackSegmentIndex);
+		if (!intersection.intersected) {
+			this.#lapManager.addLap(intersection.lapped);
+			this.#lapManager.update();
+			this.#trackSegmentIndex = intersection.trackSegmentIndex;
+		}
 
 		this.#applyVelocity(intersection);
 
 		if (this.#grounded = this.#position.y <= intersection.groundY)
 			this.#position.y = intersection.groundY;
-
-		this.#lapManager.addLap(intersection.lapped);
-		this.#lapManager.update();
-		this.#trackSegmentIndex = intersection.trackSegmentIndex;
 
 		this.#addParticles(intersection);
 		this.#updateMesh();
