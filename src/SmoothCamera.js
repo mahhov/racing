@@ -20,8 +20,8 @@ class SmoothCamera {
 		if (!delta.length())
 			delta = new THREE.Vector3(0, 0, 1);
 		delta.setLength(DISTANCE);
-		delta.y = position.y - HEIGHT;
 		this.#camera.position.copy(position.clone().sub(delta));
+		this.#camera.position.y += HEIGHT
 		this.#camera.lookAt(position);
 	}
 }

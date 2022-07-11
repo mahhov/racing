@@ -22,6 +22,8 @@ class Car extends GameEntity {
 	#position;
 	#velocity = new THREE.Vector3();
 	#direction = new THREE.Vector3(0, 0, 1);
+	#trackSegmentIndex = 0;
+	#grounded = true;
 
 	constructor(game, intersectionManager, lapManager, input, startPosition) {
 		super(Car.createMesh());
@@ -95,7 +97,7 @@ class Car extends GameEntity {
 	}
 
 	#applyVelocity(intersection) {
-		if (!intersection.position)
+		if (!intersection.intersected)
 			this.#position.add(this.#velocity);
 		else {
 			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
@@ -104,17 +106,12 @@ class Car extends GameEntity {
 		}
 	}
 
-	#getGroundY() {
-		return this.#position.z < 300 ? 0 : 5;
-		// todo
-	}
-
 	#addParticles(intersection) {
 		let particleCount =
 			(this.#controls.brake ? Math.floor(this.#velocity.length()) : 0) +
 			(this.#controls.forward ? 3 : 0) +
 			(this.#velocity.length() > .1 ? 1 : 0) +
-			(intersection.position ? 50 : 0);
+			(intersection.intersected ? 50 : 0);
 		let particleSpeed = .08;
 		for (let i = 0; i < particleCount; i++)
 			this.#game.addEntity(new Particle(
@@ -139,17 +136,20 @@ class Car extends GameEntity {
 
 	update() {
 		this.#updateControls();
-		if (this.#position.y <= this.#getGroundY())
+		if (this.#grounded)
 			this.#groundVelocityUpdate();
 		else
 			this.#airVelocityUpdate();
-		let intersection = this.#intersectionManager.canMove(this.#position, this.#velocity);
+		let intersection = this.#intersectionManager.canMove(this.#position, this.#velocity, this.#trackSegmentIndex);
+
 		this.#applyVelocity(intersection);
 
-		this.#position.y = Math.max(this.#position.y, this.#getGroundY());
+		if (this.#grounded = this.#position.y <= intersection.groundY)
+			this.#position.y = intersection.groundY;
 
 		this.#lapManager.addLap(intersection.lapped);
 		this.#lapManager.update();
+		this.#trackSegmentIndex = intersection.trackSegmentIndex;
 
 		this.#addParticles(intersection);
 		this.#updateMesh();

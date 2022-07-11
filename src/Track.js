@@ -31,6 +31,10 @@ class Segment {
 	static connectSegments(segment1, segment2) {
 		return new Segment(segment1.left2, segment1.right2, segment2.left1, segment2.right1);
 	}
+
+	subLeft1(vec) {
+		return vec.clone().sub(this.left1);
+	}
 }
 
 class SegmentCreator {
@@ -112,7 +116,7 @@ class Track extends GameEntity {
 	static trackX() {
 		let segments = new SegmentCreator()
 			.lineAt(100, 200, 100, 600, 30)
-			.vertLineAt(200, 0, 700, 1200, 100, 700)
+			.vertLineAt(200, 0, 700, 1200, 50, 700)
 			.lineAt(1300, 800, 1300, 1200)
 			.lineAt(1200, 1300, 800, 1300)
 			.lineAt(700, 1200, 700, 200)
