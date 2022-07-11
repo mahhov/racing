@@ -78,16 +78,17 @@ class Car extends GameEntity {
 	}
 
 	#groundVelocityUpdate() {
+		this.#velocity.y = 0;
+		let dirSign = Math.sign(this.#velocity.dot(this.#direction));
+
 		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
-		let turnSign = Math.sign(this.#velocity.dot(this.#direction));
-		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right * turnSign);
+		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right * dirSign);
 		// todo direction tilt
 
 		let accelerate = ACCELERATION * this.#controls.forward;
 		let decelerate = FRICTION + (this.#controls.brake ? BRAKE : 0);
-		this.#velocity.y = 0;
 		this.#velocity
-			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2)
+			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2 * dirSign)
 			.multiplyScalar(1 - decelerate)
 			.add(new THREE.Vector3(0, GRAVITY, 0))
 			.add(new THREE.Vector3(0, GRAVITY, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
@@ -156,7 +157,6 @@ class Car extends GameEntity {
 		this.#grounded = this.#position.y <= intersection.groundY + 1.5;
 		if (this.#grounded)
 			this.#position.y = intersection.groundY;
-		// todo why is velocity higher when sliding perpendicular
 
 		this.#addParticles(intersection);
 		this.#updateMesh();
