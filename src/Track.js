@@ -26,7 +26,7 @@ class Segment {
 	}
 
 	static fromLine(p1, p2, w1, w2) {
-		const SMOOTHNESS = .3;
+		const SMOOTHNESS = 0;
 		let dir = p2.clone().sub(p1).normalize();
 		let dir90 = dir.clone().projectOnPlane(UP).applyAxisAngle(UP, radian(90));
 		let left1 = p1.clone().addScaledVector(dir, w1 * SMOOTHNESS).addScaledVector(dir90, w1);
@@ -131,6 +131,20 @@ class Track extends GameEntity {
 			.lineAt(600, 100, 200, 100)
 			.done();
 		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 300));
+	}
+
+	static trackJumps() {
+		let segments = new SegmentCreator()
+			.vertLineAt(200, 0, 200, 200, 0, 300, 60)
+			.vertLineAt(200, 0, 400, 200, 50, 500)
+			.vertLineAt(200, 50, 600, 200, 0, 700)
+			.vertLineAt(300, 0, 800, 400, 0, 800)
+			.vertLineAt(500, 0, 700, 500, 0, 600)
+			.vertLineAt(500, 0, 500, 500, 50, 400)
+			.vertLineAt(500, 50, 300, 500, 0, 200)
+			.vertLineAt(400, 0, 100, 300, 0, 100)
+			.done();
+		return new Track(600, 800, segments, new THREE.Vector3(200, 0, 220));
 	}
 
 	static createTexture(width, length, segments) {
