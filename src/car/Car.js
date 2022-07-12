@@ -11,6 +11,7 @@ const ACCELERATION = .1;
 const TURN = radian(2);
 const GRAVITY = -.02;
 const AIR_FRICTION = .01;
+const AIR_BRAKE = .01;
 
 class Car extends GameEntity {
 	#game;
@@ -79,27 +80,31 @@ class Car extends GameEntity {
 
 	#groundVelocityUpdate() {
 		this.#velocity.y = 0;
-		let dirSign = Math.sign(this.#velocity.dot(this.#direction));
-
-		let turnSpeed = TURN * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
-		this.#direction
-			.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right * dirSign)
-			.projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal);
-
-		let accelerate = ACCELERATION * this.#controls.forward;
-		let decelerate = FRICTION + (this.#controls.brake ? BRAKE : 0);
-		this.#velocity
-			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2 * dirSign)
-			.multiplyScalar(1 - decelerate)
-			.add(new THREE.Vector3(0, GRAVITY, 0))
-			.add(new THREE.Vector3(0, GRAVITY, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
+		this.#velocityUpdate(TURN, ACCELERATION, FRICTION, BRAKE);
 	}
 
 	#airVelocityUpdate() {
+		this.#velocityUpdate(TURN, ACCELERATION, AIR_FRICTION, AIR_BRAKE);
+	}
+
+	#velocityUpdate(turn, acceleration, friction, brake) {
+		let dirSign = Math.sign(this.#velocity.dot(this.#direction));
+
+		let turnSpeed = turn * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
+		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right * dirSign);
+		if (this.#grounded)
+			this.#direction.projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal);
+		else
+			this.#direction.setComponent(1, 0).normalize();
+
+		let accelerate = acceleration * this.#controls.forward;
+		let decelerate = friction + (this.#controls.brake ? brake : 0);
 		this.#velocity
-			.add(new THREE.Vector3(0, GRAVITY, 0))
-			.multiplyScalar(1 - AIR_FRICTION);
-		// todo gliding and turning
+			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2 * dirSign)
+			.multiplyScalar(1 - decelerate)
+			.add(new THREE.Vector3(0, GRAVITY, 0));
+		if (this.#grounded)
+			this.#velocity.add(new THREE.Vector3(0, GRAVITY, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
 	}
 
 	#applyVelocity(intersection) {
