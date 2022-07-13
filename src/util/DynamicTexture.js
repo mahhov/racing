@@ -41,6 +41,15 @@ class DynamicTexture {
 			transparent: true,
 		});
 	}
+
+	get skyMaterial() {
+		return new THREE.MeshBasicMaterial({
+			map: this.#texture,
+			side: THREE.BackSide,
+			depthWrite: false,
+
+		});
+	}
 }
 
 export default DynamicTexture;

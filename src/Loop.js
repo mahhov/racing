@@ -7,7 +7,7 @@ import {sleep} from './util/util.js';
 class Loop {
 	#render = new Render(800, 800);
 	#input = new Input(this.#render.canvas);
-	#frameManager = new FrameManager(this.#input, this.#render.scene, this.#render.camera, false);
+	#frameManager = new FrameManager(this.#input, this.#render.scene, this.#render.camera, this.#render.skyTexture);
 	#paintDirty = false;
 	#updatesPerSecond = new PerSecondCount(0, 'UPS');
 	#paintsPerSecond = new PerSecondCount(1, 'FPS');
