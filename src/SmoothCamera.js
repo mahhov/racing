@@ -16,6 +16,7 @@ class SmoothCamera {
 		const WEIGHT = .7;
 		const DISTANCE = 15;
 		const HEIGHT = 15;
+		const LOOK_UP = 4;
 
 		if (!this.#followPosition) {
 			this.#followPosition = position;
@@ -30,7 +31,7 @@ class SmoothCamera {
 		delta.setLength(DISTANCE);
 		this.#camera.position.copy(this.#followPosition.clone().sub(delta));
 		this.#camera.position.y += HEIGHT;
-		this.#camera.lookAt(position);
+		this.#camera.lookAt(position.clone().add(new THREE.Vector3(0, LOOK_UP, 0)));
 	}
 }
 
