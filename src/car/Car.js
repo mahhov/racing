@@ -12,6 +12,7 @@ const TURN = radian(2);
 const GRAVITY = -.02;
 const AIR_FRICTION = .01;
 const AIR_BRAKE = .01;
+const INTERSECTION_FRICTION = .95;
 
 class Car extends GameEntity {
 	#game;
@@ -129,8 +130,8 @@ class Car extends GameEntity {
 				this.#direction.projectOnVector(intersection.direction).normalize();
 			}
 		}
-		if (anyIntersection)
-			this.#velocity.multiplyScalar(.8);
+		if (anyIntersection && this.#grounded)
+			this.#velocity.multiplyScalar(INTERSECTION_FRICTION);
 
 		return groundY;
 	}
