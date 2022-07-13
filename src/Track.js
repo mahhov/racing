@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import GameEntity from './GameEntity.js';
 import DynamicTexture from './util/DynamicTexture.js';
 import {meshFromVectors, rect} from './util/GeometryCreator.js';
-import {radian, UP} from './util/util.js';
+import {radian, rand, UP} from './util/util.js';
 
 class Segment {
 	left1;
@@ -175,17 +175,11 @@ class Track extends GameEntity {
 
 	static createMesh(width, length, segments) {
 		let group = new THREE.Group();
-		let geometry = new THREE.PlaneGeometry(width, length);
-		geometry.lookAt(new THREE.Vector3(0, 1, 0));
-		geometry.translate(width / 2, -1, length / 2);
-		group.add(new THREE.Mesh(geometry, Track.createTextureCheck(width, length).phongMaterial));
-
 		segments.forEach((segment, i) => {
 			let material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, color: 155 + Math.floor(100 * i / segments.length)});
 			let segmentMesh = meshFromVectors(rect(segment.left1.toArray(), segment.right1.toArray(), segment.right2.toArray(), segment.left2.toArray()), material);
 			group.add(segmentMesh);
 		});
-
 		return group;
 	}
 
