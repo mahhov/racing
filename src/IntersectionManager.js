@@ -5,15 +5,17 @@ class Intersection {
 	horizPosition; // position vector of the intersection or end of movement if no intersection; y = 0
 	distance; // proportional distance (0 to 1) until intersection; Infinity if no intersection
 	direction; // direction vector of the intersected line; null if no intersection
+	sign; // sign of cross product of the 2 intersected lines
 	groundY; // y position of track at horizPosition
 	trackSegmentIndex; // trackSegmentIndex
 	lapped; // 0 = no lap, <0 = reverse, >0 = forward
 
-	constructor(intersected, horizPosition, distance, direction) {
+	constructor(intersected, horizPosition, distance, direction, sign) {
 		this.intersected = intersected;
 		this.horizPosition = horizPosition;
 		this.distance = distance;
 		this.direction = direction;
+		this.sign = sign;
 	}
 }
 
@@ -44,7 +46,8 @@ class IntersectionManager {
 		if (p1 < 0 || p1 > 1 || p2 < 0 || p2 > 1)
 			return null;
 
-		return new Intersection(true, line1.at(p1, new THREE.Vector3()), p1, delta2);
+		p1 = Math.max(p1 - .0001, 0);
+		return new Intersection(true, line1.at(p1, new THREE.Vector3()), p1, delta2, Math.sign(-denominator));
 	}
 
 	static #lineProjectedHorizontal(...vectors) {
@@ -84,7 +87,7 @@ class IntersectionManager {
 			if (segmentDirection !== -1) {
 				let segmentLine = IntersectionManager.#lineProjectedHorizontal(segment.left2, segment.right2);
 				let intersection = IntersectionManager.#test2Lines(movementLine, segmentLine);
-				if (intersection) {
+				if (intersection && intersection.sign === -1) {
 					segmentDirection = 1;
 					trackSegmentIndex++;
 					if (trackSegmentIndex === this.#track.segments.length) {
@@ -97,7 +100,7 @@ class IntersectionManager {
 			if (segmentDirection !== 1) {
 				let segmentLine = IntersectionManager.#lineProjectedHorizontal(segment.left1, segment.right1);
 				let intersection = IntersectionManager.#test2Lines(movementLine, segmentLine);
-				if (intersection) {
+				if (intersection && intersection.sign === 1) {
 					segmentDirection = -1;
 					trackSegmentIndex--;
 					if (trackSegmentIndex === -1) {
@@ -107,7 +110,7 @@ class IntersectionManager {
 					continue;
 				}
 			}
-			let intersection = new Intersection(false, movementLine.at(1, new THREE.Vector3()), Infinity, null);
+			let intersection = new Intersection(false, movementLine.at(1, new THREE.Vector3()), Infinity, null, 0);
 			intersection.groundY = this.#getGround(intersection.horizPosition, trackSegmentIndex);
 			intersection.trackSegmentIndex = trackSegmentIndex;
 			intersection.lapped = lapped;

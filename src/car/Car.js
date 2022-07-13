@@ -107,22 +107,45 @@ class Car extends GameEntity {
 			this.#velocity.add(new THREE.Vector3(0, GRAVITY, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
 	}
 
-	#applyVelocity(intersection) {
-		if (!intersection.intersected)
-			this.#position.add(this.#velocity);
-		else {
-			let v1 = this.#velocity.clone().projectOnVector(intersection.direction);
-			this.#velocity.sub(v1).multiplyScalar(-.2).addScaledVector(v1, .7);
-			this.#direction.projectOnVector(intersection.direction).normalize();
+	#applyVelocity() {
+		let remaining = 1;
+		let anyIntersection = false;
+		let groundY = 0;
+		while (remaining > .1) {
+			let velocity = this.#velocity.clone().multiplyScalar(remaining);
+			let intersection = this.#intersectionManager.canMove(this.#position, velocity, this.#trackSegmentIndex);
+			groundY = intersection.groundY;
+			this.#lapManager.addLap(intersection.lapped);
+			this.#lapManager.update();
+			this.#trackSegmentIndex = intersection.trackSegmentIndex;
+			if (!intersection.intersected) {
+				this.#position.add(velocity);
+				break;
+			} else {
+				anyIntersection = true;
+				remaining *= (1 - intersection.distance);
+				this.#position.addScaledVector(velocity, intersection.distance);
+				this.#velocity.projectOnVector(intersection.direction);
+				this.#direction.projectOnVector(intersection.direction).normalize();
+			}
 		}
+		if (anyIntersection)
+			this.#velocity.multiplyScalar(.8);
+
+		return groundY;
 	}
 
-	#addParticles(intersection) {
+	#checkGround(groundY) {
+		this.#grounded = this.#position.y <= groundY + 1.5;
+		if (this.#grounded)
+			this.#position.y = groundY;
+	}
+
+	#addParticles() {
 		let particleCount =
 			(this.#controls.brake ? Math.floor(this.#velocity.length()) : 0) +
 			(this.#controls.forward ? 3 : 0) +
-			(this.#velocity.length() > .5 ? 1 : 0) +
-			(intersection.intersected ? 50 : 0);
+			(this.#velocity.length() > .5 ? 1 : 0);
 		let particleSpeed = .08;
 		for (let i = 0; i < particleCount; i++)
 			this.#game.addEntity(new Particle(
@@ -151,20 +174,10 @@ class Car extends GameEntity {
 			this.#groundVelocityUpdate();
 		else
 			this.#airVelocityUpdate();
-		let intersection = this.#intersectionManager.canMove(this.#position, this.#velocity, this.#trackSegmentIndex);
-		if (!intersection.intersected) {
-			this.#lapManager.addLap(intersection.lapped);
-			this.#lapManager.update();
-			this.#trackSegmentIndex = intersection.trackSegmentIndex;
-		}
+		let groundY = this.#applyVelocity();
+		this.#checkGround(groundY);
 
-		this.#applyVelocity(intersection);
-
-		this.#grounded = this.#position.y <= intersection.groundY + 1.5;
-		if (this.#grounded)
-			this.#position.y = intersection.groundY;
-
-		this.#addParticles(intersection);
+		this.#addParticles();
 		this.#updateMesh();
 	}
 
