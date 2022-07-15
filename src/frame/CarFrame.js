@@ -5,6 +5,7 @@ import UiText from '../ui/UiText.js';
 
 class CarFrame extends UiComponent {
 	#save;
+	#carSelected = 0;
 	#currencyText;
 	#helpText;
 
@@ -19,11 +20,12 @@ class CarFrame extends UiComponent {
 					this.#save.currency -= carInfo.cost;
 					this.#save.save();
 				}
+				this.#carSelected = i;
 				this.emit('select', carInfo);
 			});
 		});
-		this.#currencyText = this.addUiComponent(new UiText('', .5, .5, 'center', 'bottom', '#fff'));
-		this.#helpText = this.addUiComponent(new UiText('', .5, .56, 'center', 'bottom', '#fff'));
+		this.#currencyText = this.addUiComponent(new UiText('', .5, .56, 'center', 'bottom', '#fff'));
+		this.#helpText = this.addUiComponent(new UiText('', .5, .62, 'center', 'bottom', '#fff'));
 		this.addUiComponent(new UiText('Select car', .5, .2, 'center', 'bottom', '#fff', '60px arial'));
 		this.addUiComponent(new UiButton(input, 'Select track', .15, .9)).addListener('click', () => this.emit('selectTrack'));
 	}
@@ -31,6 +33,7 @@ class CarFrame extends UiComponent {
 	update() {
 		super.update();
 		CAR_INFOS.forEach((carInfo, i) => {
+			this.uiComponents[i].backColor = i === this.#carSelected ? '#333' : this.#save.carsUnlocked[i] ? '#000' : '#f00';
 			this.uiComponents[i].disabled = !this.#save.carsUnlocked[i] && carInfo.cost > this.#save.currency;
 			if (this.uiComponents[i].active) {
 				this.#helpText.text = this.#save.carsUnlocked[i] ? '' : `\$${carInfo.cost} to unlock.`;
@@ -43,5 +46,4 @@ class CarFrame extends UiComponent {
 
 export default CarFrame;
 
-// todo highlight selected, unlocked, locked
 // todo show preview of stats

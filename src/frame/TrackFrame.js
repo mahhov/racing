@@ -25,8 +25,8 @@ class TrackFrame extends UiComponent {
 		this.addUiComponent(new UiButton(input, 'Editor', .85, .9)).addListener('click', () => this.emit('editor'));
 	}
 
-	set carText(text) {
-		this.#carText.text = text;
+	set carText(carText) {
+		this.#carText.text = carText;
 	}
 
 	update() {

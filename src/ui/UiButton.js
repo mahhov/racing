@@ -8,6 +8,7 @@ class UiButton extends UiComponent {
 	#top;
 	#width;
 	#height;
+	#backColor;
 	#disabled = false;
 	#state = UiButton.states.OFF;
 
@@ -18,15 +19,20 @@ class UiButton extends UiComponent {
 		OFF: 0, HOVER: 1, CLICK: 2,
 	};
 
-	constructor(input, text, centerX, top, width = .2, height = .04) {
+	constructor(input, text, centerX, top, width = .2, height = .04, backColor = '#000') {
 		super(input);
 		this.#centerX = centerX;
 		this.#top = top;
 		this.#width = width;
 		this.#height = height;
+		this.#backColor = backColor;
 
-		this.#rect = this.addUiComponent(new UiRect(centerX - width / 2, top, width, height, '#000', '#fff'));
+		this.#rect = this.addUiComponent(new UiRect(centerX - width / 2, top, width, height, backColor, '#fff'));
 		this.#text = this.addUiComponent(new UiText(text, centerX, top + height / 2, 'center', 'middle', '#fff'));
+	}
+
+	set backColor(backColor) {
+		this.#backColor = backColor;
 	}
 
 	set disabled(disabled) {
@@ -46,7 +52,7 @@ class UiButton extends UiComponent {
 		else
 			this.#state = UiButton.states.OFF;
 
-		this.#rect.fillColor = this.#disabled ? '#333' : ['#000', '#555', '#aaa'][this.#state];
+		this.#rect.fillColor = this.#disabled ? '#333' : [this.#backColor, '#555', '#aaa'][this.#state];
 		this.#text.color = this.#disabled ? '#999' : '#fff';
 
 		if (this.#state === UiButton.states.CLICK)
