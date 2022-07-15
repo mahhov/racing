@@ -144,7 +144,7 @@ class Track extends GameEntity {
 			.vertLineAt(500, 50, 300, 500, 0, 200)
 			.vertLineAt(400, 0, 100, 300, 0, 100)
 			.done();
-		return new Track(600, 300, 800, segments, new THREE.Vector3(200, 0, 220));
+		return new Track(600, 300, 900, segments, new THREE.Vector3(200, 0, 220));
 	}
 
 	static createTexture(width, length, segments) {
