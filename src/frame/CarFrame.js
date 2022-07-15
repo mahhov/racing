@@ -28,7 +28,7 @@ class CarFrame extends UiComponent {
 		this.#currencyText = this.addUiComponent(new UiText('', .5, .56, 'center', 'bottom', '#fff'));
 		this.#helpText = this.addUiComponent(new UiText('', .5, .62, 'center', 'bottom', '#fff'));
 		this.#carParamsTexts = CAR_INFOS[0].carParams.uiTextArray.map((_, i) =>
-			this.addUiComponent(new UiText('', .5, .68 + i * .06, 'center', 'bottom', '#fff')));
+			this.addUiComponent(new UiText('', .5, .68 + i * .03, 'center', 'bottom', '#fff')));
 		this.addUiComponent(new UiText('Select car', .5, .2, 'center', 'bottom', '#fff', '60px arial'));
 		this.addUiComponent(new UiButton(input, 'Select track', .15, .9)).addListener('click', () => this.emit('selectTrack'));
 	}

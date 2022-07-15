@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Car from '../car/Car.js';
+import CAR_INFOS from '../car/CarInfo.js';
 import Input from '../Input.js';
 import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
@@ -25,7 +26,7 @@ class GameFrame extends UiComponent {
 		this.#camera = new SmoothCamera(camera);
 	}
 
-	reset(track) {
+	reset(track, carParams) {
 		this.#scene.clear();
 		let light1 = new THREE.PointLight(0xffffff, 1, 0);
 		light1.position.set(0, 30, 0);
@@ -37,9 +38,11 @@ class GameFrame extends UiComponent {
 		this.#track = track;
 		this.#intersectionManager = new IntersectionManager(this.#track);
 		this.#scene.add(this.#track.mesh);
-		this.#playerCar = new Car(this, this.#track, this.#intersectionManager, new LapManager(1), this.input, this.#track.startPosition.clone());
+		this.#playerCar = new Car(this, this.#track, this.#intersectionManager, new LapManager(1), this.input,
+			carParams, this.#track.startPosition.clone());
 		this.#scene.add(this.#playerCar.mesh);
-		this.#opponentCar = new Car(this, this.#track, this.#intersectionManager, new LapManager(1), null, this.#track.startPosition.clone());
+		this.#opponentCar = new Car(this, this.#track, this.#intersectionManager, new LapManager(1), null,
+			CAR_INFOS[0].carParams, this.#track.startPosition.clone());
 		this.#scene.add(this.#opponentCar.mesh);
 
 		this.#done = false;

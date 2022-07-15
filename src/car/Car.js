@@ -5,15 +5,6 @@ import {cube, meshFromVectors, trapezoid, TrapezoidParams} from '../util/Geometr
 import {clamp, radian, rand, UP} from '../util/util.js';
 import Controls from './Controls.js';
 
-const FRICTION = .03;
-const BRAKE = .05;
-const ACCELERATION = .1;
-const TURN = radian(2);
-const GRAVITY = -.02;
-const AIR_FRICTION = .01;
-const AIR_BRAKE = .01;
-const INTERSECTION_FRICTION = .95;
-
 class Car extends GameEntity {
 	#game;
 	#track;
@@ -22,13 +13,14 @@ class Car extends GameEntity {
 	#input;
 	#controls;
 
+	#params;
 	#position;
 	#velocity = new THREE.Vector3();
 	#direction = new THREE.Vector3(0, 0, 1);
 	#trackSegmentIndex = 0;
 	#grounded = true;
 
-	constructor(game, track, intersectionManager, lapManager, input, startPosition) {
+	constructor(game, track, intersectionManager, lapManager, input, params, startPosition) {
 		super(Car.createMesh());
 		this.#game = game;
 		this.#track = track;
@@ -36,6 +28,8 @@ class Car extends GameEntity {
 		this.#lapManager = lapManager;
 		this.#input = input;
 		this.#controls = new Controls();
+
+		this.#params = params;
 		this.#position = startPosition;
 	}
 
@@ -81,11 +75,11 @@ class Car extends GameEntity {
 
 	#groundVelocityUpdate() {
 		this.#velocity.y = 0;
-		this.#velocityUpdate(TURN, ACCELERATION, FRICTION, BRAKE);
+		this.#velocityUpdate(this.#params.turn, this.#params.acceleration, this.#params.friction, this.#params.brake);
 	}
 
 	#airVelocityUpdate() {
-		this.#velocityUpdate(TURN, ACCELERATION, AIR_FRICTION, AIR_BRAKE);
+		this.#velocityUpdate(this.#params.turn, this.#params.acceleration, this.#params.airFriction, this.#params.airBrake);
 	}
 
 	#velocityUpdate(turn, acceleration, friction, brake) {
@@ -103,9 +97,9 @@ class Car extends GameEntity {
 		this.#velocity
 			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2 * dirSign)
 			.multiplyScalar(1 - decelerate)
-			.add(new THREE.Vector3(0, GRAVITY, 0));
+			.add(new THREE.Vector3(0, this.#params.gravity, 0));
 		if (this.#grounded)
-			this.#velocity.add(new THREE.Vector3(0, GRAVITY, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
+			this.#velocity.add(new THREE.Vector3(0, this.#params.gravity, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
 	}
 
 	#applyVelocity() {
@@ -131,7 +125,7 @@ class Car extends GameEntity {
 			}
 		}
 		if (anyIntersection && this.#grounded)
-			this.#velocity.multiplyScalar(INTERSECTION_FRICTION);
+			this.#velocity.multiplyScalar(this.#params.intersectionFriction);
 
 		return groundY;
 	}

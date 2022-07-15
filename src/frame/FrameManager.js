@@ -12,7 +12,7 @@ import TrackFrame from './TrackFrame.js';
 class FrameManager extends GameEntity {
 	#save = Save.load();
 	#activeTrackInfo;
-	#activeCarInfo;
+	#activeCarInfo = CAR_INFOS[0];
 
 	#trackFrame;
 	#trackEditorFrame;
@@ -36,7 +36,7 @@ class FrameManager extends GameEntity {
 		this.#trackFrame.carText = CAR_INFOS[0].name;
 		this.#trackFrame.addListener('select', trackInfo => {
 			this.#activeTrackInfo = trackInfo;
-			this.#gameFrame.reset(trackInfo.track, this.#activeCarInfo);
+			this.#gameFrame.reset(trackInfo.track, this.#activeCarInfo.carParams);
 			this.#activeFrame = this.#gameFrame;
 		});
 		this.#trackFrame.addListener('editor', () => this.#activeFrame = this.#trackEditorFrame);
