@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import GameEntity from './GameEntity.js';
-import DynamicTexture from './util/DynamicTexture.js';
-import {meshFromVectors, rect} from './util/GeometryCreator.js';
-import {radian, randInt, UP} from './util/util.js';
+import GameEntity from '../GameEntity.js';
+import DynamicTexture from '../util/DynamicTexture.js';
+import {meshFromVectors, rect} from '../util/GeometryCreator.js';
+import {radian, randInt, UP} from '../util/util.js';
 
 class Segment {
 	left1;

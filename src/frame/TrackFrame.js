@@ -1,4 +1,4 @@
-import TRACK_INFOS from '../TrackInfo.js';
+import TRACK_INFOS from '../track/TrackInfo.js';
 import UiButton from '../ui/UiButton.js';
 import UiComponent from '../ui/UiComponent.js';
 import UiImage from '../ui/UiImage.js';

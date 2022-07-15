@@ -1,6 +1,6 @@
 import GameEntity from '../GameEntity.js';
 import Save from '../Save.js';
-import TRACK_INFOS from '../TrackInfo.js';
+import TRACK_INFOS from '../track/TrackInfo.js';
 import EndFrame from './EndFrame.js';
 import GameFrame from './GameFrame.js';
 import PauseFrame from './PauseFrame.js';
