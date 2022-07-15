@@ -8,6 +8,7 @@ class CarFrame extends UiComponent {
 	#carSelected = 0;
 	#currencyText;
 	#helpText;
+	#carParamsTexts;
 
 	constructor(input, save) {
 		super(input);
@@ -26,18 +27,23 @@ class CarFrame extends UiComponent {
 		});
 		this.#currencyText = this.addUiComponent(new UiText('', .5, .56, 'center', 'bottom', '#fff'));
 		this.#helpText = this.addUiComponent(new UiText('', .5, .62, 'center', 'bottom', '#fff'));
+		this.#carParamsTexts = CAR_INFOS[0].carParams.uiTextArray.map((_, i) =>
+			this.addUiComponent(new UiText('', .5, .68 + i * .06, 'center', 'bottom', '#fff')));
 		this.addUiComponent(new UiText('Select car', .5, .2, 'center', 'bottom', '#fff', '60px arial'));
 		this.addUiComponent(new UiButton(input, 'Select track', .15, .9)).addListener('click', () => this.emit('selectTrack'));
 	}
 
 	update() {
 		super.update();
+		this.#helpText.text = '';
+		this.#carParamsTexts.forEach(carParamsText => carParamsText.text = '');
 		CAR_INFOS.forEach((carInfo, i) => {
 			this.uiComponents[i].backColor = i === this.#carSelected ? '#333' : this.#save.carsUnlocked[i] ? '#000' : '#f00';
 			this.uiComponents[i].disabled = !this.#save.carsUnlocked[i] && carInfo.cost > this.#save.currency;
 			if (this.uiComponents[i].active) {
 				this.#helpText.text = this.#save.carsUnlocked[i] ? '' : `\$${carInfo.cost} to unlock.`;
-				// this.#preview.texture = trackInfo.track.texture;
+				CAR_INFOS[i].carParams.uiTextArray.forEach((text, i) =>
+					this.#carParamsTexts[i].text = text);
 			}
 		});
 		this.#currencyText.text = `Bank: \$${this.#save.currency}`;

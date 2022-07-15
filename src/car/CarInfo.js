@@ -4,6 +4,12 @@ class CarParams {
 	constructor(acceleration) {
 		this.acceleration = acceleration;
 	}
+
+	get uiTextArray() {
+		return [
+			`Acceleration: ${this.acceleration}`,
+		];
+	}
 }
 
 class CarInfo {
