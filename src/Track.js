@@ -188,7 +188,7 @@ class Track extends GameEntity {
 			skyTexture.ctx.strokeRect(randInt(skyTexture.width - MAX_SIZE), randInt(skyTexture.height - MAX_SIZE), randInt(MAX_SIZE), randInt(MAX_SIZE));
 		}
 		let skyBox = new THREE.Mesh(new THREE.BoxGeometry(width, height, length), skyTexture.skyMaterial);
-		skyBox.position.set(width / 2, 0, length / 2);
+		skyBox.position.set(width / 2, -80, length / 2);
 		group.add(skyBox);
 
 		return group;
