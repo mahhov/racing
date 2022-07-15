@@ -182,9 +182,9 @@ class Car extends GameEntity {
 		this.#updateMesh();
 	}
 
-	paintUi(ctx, width, height) {
+	paintUi(uiTexture) {
 		if (this.#input)
-			this.#lapManager.paintUi(ctx, width, height);
+			this.#lapManager.paintUi(uiTexture);
 	}
 }
 

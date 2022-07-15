@@ -33,8 +33,8 @@ class PerSecondCount extends GameEntity {
 		this.#start = now;
 	}
 
-	paintUi(ctx, width, height) {
-		super.paintUi(ctx, width, height);
+	paintUi(uiTexture) {
+		super.paintUi(uiTexture);
 	}
 }
 

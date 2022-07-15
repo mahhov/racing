@@ -25,13 +25,13 @@ class LapManager extends GameEntity {
 		this.#ticks++;
 	}
 
-	paintUi(ctx, width, height) {
+	paintUi(uiTexture) {
 		this.#lapText.text = `${this.lap + 1} / ${this.maxLap}`;
 		let seconds = Math.floor(this.#ticks / 20);
 		let minutes = Math.floor(seconds / 60);
 		this.#timeText.text = `${minutes}:${seconds % 60}`;
 
-		super.paintUi(ctx, width, height);
+		super.paintUi(uiTexture);
 	}
 }
 

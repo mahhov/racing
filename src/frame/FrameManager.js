@@ -63,8 +63,8 @@ class FrameManager extends GameEntity {
 		this.#activeFrame.update();
 	}
 
-	paintUi(ctx, width, height) {
-		this.#activeFrame.paintUi(ctx, width, height);
+	paintUi(uiTexture) {
+		this.#activeFrame.paintUi(uiTexture);
 	}
 }
 

@@ -36,9 +36,9 @@ class Loop {
 		if (this.#paintDirty) {
 			this.#paintsPerSecond.add();
 			this.#paintDirty = false;
-			this.#frameManager.paintUi(this.#render.uiTexture.ctx, this.#render.width, this.#render.height);
-			this.#updatesPerSecond.paintUi(this.#render.uiTexture.ctx, this.#render.width, this.#render.height);
-			this.#paintsPerSecond.paintUi(this.#render.uiTexture.ctx, this.#render.width, this.#render.height);
+			this.#frameManager.paintUi(this.#render.uiTexture);
+			this.#updatesPerSecond.paintUi(this.#render.uiTexture);
+			this.#paintsPerSecond.paintUi(this.#render.uiTexture);
 			this.#render.render(this.#frameManager.uiOnly);
 		}
 		requestAnimationFrame(() => this.#paintLoop());

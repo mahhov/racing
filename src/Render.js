@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import DynamicTexture from './util/DynamicTexture.js';
 
 class Render {
-	width;
-	height;
 	renderer;
 
 	scene;
@@ -14,9 +12,6 @@ class Render {
 	uiTexture;
 
 	constructor(width, height) {
-		this.width = width;
-		this.height = height;
-
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize(width, height);
 		this.renderer.autoClear = false;
@@ -40,7 +35,7 @@ class Render {
 		if (!uiOnly)
 			this.renderer.render(this.scene, this.camera);
 		this.renderer.render(this.uiScene, this.uiCamera);
-		this.uiTexture.ctx.clearRect(0, 0, this.width, this.height);
+		this.uiTexture.ctx.clearRect(0, 0, this.uiTexture.width, this.uiTexture.height);
 	}
 }
 

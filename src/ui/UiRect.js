@@ -22,22 +22,26 @@ class UiRect extends UiComponent {
 		this.#fillColor = fillColor;
 	}
 
-	paintUi(ctx, width, height) {
+	paintUi(uiTexture) {
 		if (this.#fillColor) {
-			ctx.fillStyle = this.#fillColor;
-			ctx.fillRect(this.#left * width, this.#top * height, this.#width * width, this.#height * height);
+			uiTexture.ctx.fillStyle = this.#fillColor;
+			uiTexture.ctx.fillRect(
+				this.#left * uiTexture.width,
+				this.#top * uiTexture.height,
+				this.#width * uiTexture.width,
+				this.#height * uiTexture.height);
 		}
 		if (this.#outlineColor) {
-			ctx.fillStyle = this.#outlineColor;
-			let l = this.#left * width;
-			let t = this.#top * height;
-			let w = this.#width * width;
-			let h = this.#height * height;
+			uiTexture.ctx.fillStyle = this.#outlineColor;
+			let l = this.#left * uiTexture.width;
+			let t = this.#top * uiTexture.height;
+			let w = this.#width * uiTexture.width;
+			let h = this.#height * uiTexture.height;
 			let thickness = 2;
-			ctx.fillRect(l - thickness, t, thickness, h); // left
-			ctx.fillRect(l, t - thickness, w, thickness); // top
-			ctx.fillRect(l + w, t, thickness, h); // right
-			ctx.fillRect(l, t + h, w, thickness); // bottom
+			uiTexture.ctx.fillRect(l - thickness, t, thickness, h); // left
+			uiTexture.ctx.fillRect(l, t - thickness, w, thickness); // top
+			uiTexture.ctx.fillRect(l + w, t, thickness, h); // right
+			uiTexture.ctx.fillRect(l, t + h, w, thickness); // bottom
 		}
 	}
 }

@@ -27,13 +27,13 @@ class UiImage extends UiComponent {
 		}
 	}
 
-	paintUi(ctx, width, height) {
+	paintUi(uiTexture) {
 		if (this.#texture)
-			ctx.drawImage(this.#texture.canvas,
-				this.#left * width,
-				this.#top * height,
-				this.#width * width,
-				this.#height * height);
+			uiTexture.ctx.drawImage(this.#texture.canvas,
+				this.#left * uiTexture.width,
+				this.#top * uiTexture.height,
+				this.#width * uiTexture.width,
+				this.#height * uiTexture.height);
 	}
 }
 

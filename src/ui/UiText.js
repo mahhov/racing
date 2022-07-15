@@ -28,12 +28,12 @@ class UiText extends UiComponent {
 		this.#color = color;
 	}
 
-	paintUi(ctx, width, height) {
-		ctx.textAlign = this.#textAlign;
-		ctx.textBaseline = this.#textVertAlign;
-		ctx.fillStyle = this.#color;
-		ctx.font = this.#font;
-		ctx.fillText(this.#text, this.#left * width, this.#bottom * height);
+	paintUi(uiTexture) {
+		uiTexture.ctx.textAlign = this.#textAlign;
+		uiTexture.ctx.textBaseline = this.#textVertAlign;
+		uiTexture.ctx.fillStyle = this.#color;
+		uiTexture.ctx.font = this.#font;
+		uiTexture.ctx.fillText(this.#text, this.#left * uiTexture.width, this.#bottom * uiTexture.height);
 	}
 }
 

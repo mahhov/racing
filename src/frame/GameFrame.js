@@ -79,8 +79,8 @@ class GameFrame extends UiComponent {
 		this.#camera.follow(this.#playerCar.position);
 	}
 
-	paintUi(ctx, width, height) {
-		this.#entities.forEach(entity => entity.paintUi(ctx, width, height));
+	paintUi(uiTexture) {
+		this.#entities.forEach(entity => entity.paintUi(uiTexture));
 	}
 }
 
