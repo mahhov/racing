@@ -13,10 +13,6 @@ class Render {
 	uiCamera;
 	uiTexture;
 
-	skyScene;
-	skyCamera;
-	skyTexture;
-
 	constructor(width, height) {
 		this.width = width;
 		this.height = height;
@@ -27,17 +23,12 @@ class Render {
 		document.body.appendChild(this.canvas);
 
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+		this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 2000);
 
 		this.uiScene = new THREE.Scene();
 		this.uiCamera = new THREE.OrthographicCamera(-.5, .5, .5, -.5, 0, 1);
 		this.uiTexture = new DynamicTexture(width, height);
 		this.uiScene.add(new THREE.Mesh(new THREE.PlaneGeometry(), this.uiTexture.uiMaterial));
-
-		this.skyScene = new THREE.Scene();
-		this.skyCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 25);
-		this.skyTexture = new DynamicTexture(400, 400);
-		this.skyScene.add(new THREE.Mesh(new THREE.SphereGeometry(10, 30, 15), this.skyTexture.skyMaterial));
 	}
 
 	get canvas() {
@@ -46,11 +37,8 @@ class Render {
 
 	render(uiOnly) {
 		this.renderer.clear();
-		if (!uiOnly) {
-			this.skyCamera.lookAt(this.camera.getWorldDirection(new THREE.Vector3()));
-			this.renderer.render(this.skyScene, this.skyCamera);
+		if (!uiOnly)
 			this.renderer.render(this.scene, this.camera);
-		}
 		this.renderer.render(this.uiScene, this.uiCamera);
 		this.uiTexture.ctx.clearRect(0, 0, this.width, this.height);
 	}

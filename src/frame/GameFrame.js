@@ -5,7 +5,6 @@ import IntersectionManager from '../IntersectionManager.js';
 import LapManager from '../LapManager.js';
 import SmoothCamera from '../SmoothCamera.js';
 import UiComponent from '../ui/UiComponent.js';
-import {rand} from '../util/util.js';
 
 class GameFrame extends UiComponent {
 	#scene;
@@ -26,7 +25,7 @@ class GameFrame extends UiComponent {
 		this.#camera = new SmoothCamera(camera);
 	}
 
-	reset(track, skyTexture) {
+	reset(track) {
 		this.#scene.clear();
 		let light1 = new THREE.PointLight(0xffffff, 1, 0);
 		light1.position.set(0, 30, 0);
@@ -48,11 +47,6 @@ class GameFrame extends UiComponent {
 		this.#addedEntities = [];
 		this.#entities.push(this.#playerCar);
 		this.#entities.push(this.#opponentCar);
-
-		skyTexture.ctx.fillStyle = 'red';
-		for (let i = 0; i < 200; i++)
-			skyTexture.ctx.fillRect(rand(400), rand(400), 20, 20);
-		this.skyTexture =skyTexture
 	}
 
 	addEntity(particle) {

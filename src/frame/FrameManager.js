@@ -18,7 +18,7 @@ class FrameManager extends GameEntity {
 	#endFrame;
 	#activeFrame;
 
-	constructor(input, scene, camera, skyTexture) {
+	constructor(input, scene, camera) {
 		super();
 		this.#trackFrame = new TrackFrame(input, this.#save);
 		this.#trackEditorFrame = new TrackEditorFrame(input);
@@ -30,7 +30,7 @@ class FrameManager extends GameEntity {
 
 		this.#trackFrame.addListener('select', trackInfo => {
 			this.#activeTrackInfo = trackInfo;
-			this.#gameFrame.reset(trackInfo.track, skyTexture);
+			this.#gameFrame.reset(trackInfo.track);
 			this.#activeFrame = this.#gameFrame;
 		});
 		this.#trackFrame.addListener('editor', () => this.#activeFrame = this.#trackEditorFrame);

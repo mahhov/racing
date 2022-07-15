@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import GameEntity from './GameEntity.js';
 import DynamicTexture from './util/DynamicTexture.js';
 import {meshFromVectors, rect} from './util/GeometryCreator.js';
-import {radian, rand, UP} from './util/util.js';
+import {radian, randInt, UP} from './util/util.js';
 
 class Segment {
 	left1;
@@ -90,8 +90,8 @@ class Track extends GameEntity {
 	startPosition;
 	texture;
 
-	constructor(width, length, segments, startPosition) {
-		super(Track.createMesh(width, length, segments));
+	constructor(width, height, length, segments, startPosition) {
+		super(Track.createMesh(width, height, length, segments));
 		this.texture = Track.createTexture(width, length, segments);
 		this.segments = segments;
 		this.startPosition = startPosition;
@@ -104,7 +104,7 @@ class Track extends GameEntity {
 			.lineAt(600, 500, 600, 200)
 			.lineAt(500, 100, 200, 100)
 			.done();
-		return new Track(700, 700, segments, new THREE.Vector3(100, 0, 300));
+		return new Track(700, 300, 700, segments, new THREE.Vector3(100, 0, 300));
 	}
 
 	static trackB() {
@@ -118,7 +118,7 @@ class Track extends GameEntity {
 			.lineAt(500, 300, 500, 200) // down 100
 			.lineAt(400, 100, 200, 100)  // right 200
 			.done();
-		return new Track(1100, 1100, segments, new THREE.Vector3(100, 0, 300));
+		return new Track(1100, 300, 1100, segments, new THREE.Vector3(100, 0, 300));
 	}
 
 	static trackX() {
@@ -130,7 +130,7 @@ class Track extends GameEntity {
 			.lineAt(700, 1200, 700, 200)
 			.lineAt(600, 100, 200, 100)
 			.done();
-		return new Track(1400, 1400, segments, new THREE.Vector3(100, 0, 300));
+		return new Track(1400, 300, 1400, segments, new THREE.Vector3(100, 0, 300));
 	}
 
 	static trackJumps() {
@@ -144,7 +144,7 @@ class Track extends GameEntity {
 			.vertLineAt(500, 50, 300, 500, 0, 200)
 			.vertLineAt(400, 0, 100, 300, 0, 100)
 			.done();
-		return new Track(600, 800, segments, new THREE.Vector3(200, 0, 220));
+		return new Track(600, 300, 800, segments, new THREE.Vector3(200, 0, 220));
 	}
 
 	static createTexture(width, length, segments) {
@@ -173,18 +173,29 @@ class Track extends GameEntity {
 		return texture;
 	}
 
-	static createMesh(width, length, segments) {
+	static createMesh(width, height, length, segments) {
 		let group = new THREE.Group();
 		segments.forEach((segment, i) => {
 			let material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, color: 155 + Math.floor(100 * i / segments.length)});
 			let segmentMesh = meshFromVectors(rect(segment.left1.toArray(), segment.right1.toArray(), segment.right2.toArray(), segment.left2.toArray()), material);
 			group.add(segmentMesh);
 		});
+
+		let skyTexture = new DynamicTexture(400, 400);
+		const MAX_SIZE = 40;
+		for (let i = 0; i < 200; i++) {
+			skyTexture.ctx.strokeStyle = `rgb(${randInt(256)}, ${randInt(256)}, ${randInt(256)})`;
+			skyTexture.ctx.strokeRect(randInt(skyTexture.width - MAX_SIZE), randInt(skyTexture.height - MAX_SIZE), randInt(MAX_SIZE), randInt(MAX_SIZE));
+		}
+		let skyBox = new THREE.Mesh(new THREE.BoxGeometry(width, height, length), skyTexture.skyMaterial);
+		skyBox.position.set(width / 2, 0, length / 2);
+		group.add(skyBox);
+
 		return group;
 	}
 
 	static createTextureCheck(width, length) {
-		let SQUARE_SIZE = 10;
+		let SQUARE_SIZE = 30;
 		let texture = new DynamicTexture(width, length);
 		texture.ctx.fillStyle = '#f00';
 		for (let x = 0; x < width / SQUARE_SIZE; x++)
