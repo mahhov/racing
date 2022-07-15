@@ -40,7 +40,7 @@ class FrameManager extends GameEntity {
 		this.#gameFrame.addListener('pause', () => this.#activeFrame = this.#pauseFrame);
 		this.#gameFrame.addListener('end', win => {
 			if (win) {
-				this.#save.currency += this.#activeTrackInfo.currencyReward;
+				this.#save.currency += this.#activeTrackInfo.reward;
 				let index = TRACK_INFOS.indexOf(this.#activeTrackInfo);
 				this.#save.tracksUnlocked[index + 1] = true;
 				this.#save.save();

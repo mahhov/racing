@@ -31,7 +31,7 @@ class TrackFrame extends UiComponent {
 			this.uiComponents[i].disabled = !this.#save.tracksUnlocked[i];
 			if (this.uiComponents[i].active) {
 				this.#helpText.text = this.#save.tracksUnlocked[i] ?
-					`Reward: ${trackInfo.currencyReward}` :
+					`Reward: ${trackInfo.reward}` :
 					'Complete the previous tracks to unlock.';
 				this.#preview.texture = trackInfo.track.texture;
 			}
