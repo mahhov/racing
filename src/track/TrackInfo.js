@@ -16,16 +16,6 @@ class TrackInfo {
 
 let createTrackB = () => {
 	let segments = new SegmentCreator()
-		.lineAt(100, 200, 100, 500, 30)
-		.lineAt(200, 600, 500, 600)
-		.lineAt(600, 500, 600, 200)
-		.lineAt(500, 100, 200, 100)
-		.done();
-	return new Track(700, 300, 700, segments, new THREE.Vector3(100, 0, 300));
-};
-
-let createTrackX = () => {
-	let segments = new SegmentCreator()
 		.lineAt(100, 200, 100, 900, 30) // forward 800
 		.lineAt(200, 1000, 400, 1000) // left 200
 		.lineAt(500, 900, 500, 800) // down 100
@@ -38,7 +28,7 @@ let createTrackX = () => {
 	return new Track(1100, 300, 1100, segments, new THREE.Vector3(100, 0, 300));
 };
 
-let createTrackSquare = () => {
+let createTrackX = () => {
 	let segments = new SegmentCreator()
 		.lineAt(100, 200, 100, 600, 30)
 		.vertLineAt(200, 0, 700, 1200, 50, 700)
@@ -48,6 +38,16 @@ let createTrackSquare = () => {
 		.lineAt(600, 100, 200, 100)
 		.done();
 	return new Track(1400, 300, 1400, segments, new THREE.Vector3(100, 0, 300));
+};
+
+let createTrackSquare = () => {
+	let segments = new SegmentCreator()
+		.lineAt(100, 200, 100, 500, 30)
+		.lineAt(200, 600, 500, 600)
+		.lineAt(600, 500, 600, 200)
+		.lineAt(500, 100, 200, 100)
+		.done();
+	return new Track(700, 300, 700, segments, new THREE.Vector3(100, 0, 300));
 };
 
 let createTrackJumps = () => {
