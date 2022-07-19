@@ -75,14 +75,17 @@ class Car extends GameEntity {
 
 	#groundVelocityUpdate() {
 		this.#velocity.y = 0;
-		this.#velocityUpdate(this.#params.turn, this.#params.acceleration, this.#params.friction, this.#params.brake);
+		this.#velocityUpdate(this.#params.turn, this.#params.acceleration, this.#params.friction, this.#params.brake, this.#params.gravity);
 	}
 
 	#airVelocityUpdate() {
-		this.#velocityUpdate(this.#params.turn, this.#params.acceleration, this.#params.airFriction, this.#params.airBrake);
+		let friction = this.#controls.sprint ? 0 : this.#params.airFriction;
+		let acceleration = this.#controls.sprint ? this.#params.acceleration : 0;
+		let gravity = this.#controls.sprint ? this.#params.gravity * 2 : this.#params.gravity;
+		this.#velocityUpdate(this.#params.turn, acceleration, friction, this.#params.airBrake, gravity);
 	}
 
-	#velocityUpdate(turn, acceleration, friction, brake) {
+	#velocityUpdate(turn, acceleration, friction, brake, gravity) {
 		let dirSign = Math.sign(this.#velocity.dot(this.#direction));
 
 		let turnSpeed = turn * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
@@ -97,9 +100,11 @@ class Car extends GameEntity {
 		this.#velocity
 			.addScaledVector(this.#direction, accelerate + this.#velocity.length() * decelerate / 2 * dirSign)
 			.multiplyScalar(1 - decelerate)
-			.add(new THREE.Vector3(0, this.#params.gravity, 0));
+			.add(new THREE.Vector3(0, gravity, 0));
 		if (this.#grounded)
-			this.#velocity.add(new THREE.Vector3(0, this.#params.gravity, 0).projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
+			this.#velocity.add(
+				new THREE.Vector3(0, gravity, 0)
+					.projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal));
 	}
 
 	#applyVelocity() {
@@ -160,7 +165,7 @@ class Car extends GameEntity {
 	}
 
 	get #dirUp() {
-		return this.#direction.clone().cross(UP).cross(this.#direction);
+		return this.#direction.clone().cross(UP).cross(this.#direction).normalize();
 	}
 
 	update() {
