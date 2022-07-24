@@ -90,7 +90,7 @@ class TrackEditorFrame extends UiComponent {
 
 	#floatToGridCoord(floatCoord) {
 		// map [0, 1] to [0, gridSize]
-		return floatCoord.map(c => Math.round((c - this.#canvasMargin / this.#canvasSize) * this.#gridSize));
+		return floatCoord.map(c => Math.round((c * this.#canvasSize - this.#canvasMargin) * (this.#gridSize - 1) / (this.#canvasSize - this.#canvasMargin * 2)));
 	}
 
 	#gridToCanvasCoord(gridCoord) {
