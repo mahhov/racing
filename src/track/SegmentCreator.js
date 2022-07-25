@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {radian, UP} from '../util/util.js';
+import Track from './Track.js';
 
 class Segment {
 	left1;
@@ -45,7 +46,7 @@ class Segment {
 class SegmentCreator {
 	#segments = [];
 	#position;
-	#width;
+	#width = 30;
 
 	lineAt(x, z, x2, z2, width = this.#width) {
 		this.moveTo(x, 0, z, width);
@@ -78,7 +79,7 @@ class SegmentCreator {
 		let lastSegment = this.#segments[this.#segments.length - 1];
 		if (lastSegment)
 			this.#segments.push(Segment.connectSegments(lastSegment, this.#segments[0]));
-		return this.#segments;
+		return new Track(this.#segments);
 	}
 }
 

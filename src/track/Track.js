@@ -7,14 +7,24 @@ import {randInt} from '../util/util.js';
 class Track extends GameEntity {
 	segments;
 	startPosition;
+	startDirection;
 	texture;
 
-	constructor(width, height, length, segments, startPosition) {
+	constructor(segments) {
+		let width = Math.max(...segments.flatMap(segment => [segment.left1.x, segment.right1.x])) + 100;
+		let height = Math.max(...segments.flatMap(segment => [segment.left1.y, segment.right1.y])) + 300;
+		let length = Math.max(...segments.flatMap(segment => [segment.left1.z, segment.right1.z])) + 100;
+		width = length = Math.max(width, length);
+
 		super(Track.createMesh(width, height, length, segments));
 		this.texture = Track.createTexture(width, length, segments);
 		this.segments = segments;
-		this.startPosition = startPosition;
+		this.startPosition = segments[0].left1.clone().add(segments[0].bottom.multiplyScalar(.5)).add(segments[0].left.setLength(50));
+		this.startDirection = segments[0].left.clone().normalize();
 	}
+
+	// todo shadow
+	// todo intersection based track connections
 
 	static createTexture(width, length, segments) {
 		let texture = Track.createTextureCheck(width, length);

@@ -15,12 +15,12 @@ class Car extends GameEntity {
 
 	#params;
 	#position;
+	#direction;
 	#velocity = new THREE.Vector3();
-	#direction = new THREE.Vector3(0, 0, 1);
 	#trackSegmentIndex = 0;
 	#grounded = true;
 
-	constructor(game, track, intersectionManager, lapManager, input, params, startPosition) {
+	constructor(game, track, intersectionManager, lapManager, input, params, startPosition, startDirection) {
 		super(Car.createMesh());
 		this.#game = game;
 		this.#track = track;
@@ -31,6 +31,7 @@ class Car extends GameEntity {
 
 		this.#params = params;
 		this.#position = startPosition;
+		this.#direction = startDirection;
 	}
 
 	static createMesh() {
