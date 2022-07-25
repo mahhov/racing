@@ -10,12 +10,8 @@ class Track extends GameEntity {
 	startDirection;
 	texture;
 
-	constructor(segments) {
-		let width = Math.max(...segments.flatMap(segment => [segment.left1.x, segment.right1.x])) + 100;
-		let height = Math.max(...segments.flatMap(segment => [segment.left1.y, segment.right1.y])) + 300;
-		let length = Math.max(...segments.flatMap(segment => [segment.left1.z, segment.right1.z])) + 100;
-		width = length = Math.max(width, length);
-
+	constructor(segments, maxBound) {
+		let [width, height, length] = maxBound.toArray();
 		super(Track.createMesh(width, height, length, segments));
 		this.texture = Track.createTexture(width, length, segments);
 		this.segments = segments;

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {radian, UP} from '../util/util.js';
+import {getBounds, radian, UP} from '../util/util.js';
 import Track from './Track.js';
 
 class Segment {
@@ -79,7 +79,15 @@ class SegmentCreator {
 		let lastSegment = this.#segments[this.#segments.length - 1];
 		if (lastSegment)
 			this.#segments.push(Segment.connectSegments(lastSegment, this.#segments[0]));
-		return new Track(this.#segments);
+
+		let bounds = [0, 0, 0].map((_, i) => getBounds(...this.#segments.flatMap(s =>
+			[s.left1.getComponent(i), s.right1.getComponent(i)])));
+		let shift = new THREE.Vector3().fromArray(bounds.map(b => b[0])).multiplyScalar(-1).add(new THREE.Vector3(100, 0, 100));
+		let max = new THREE.Vector3().fromArray(bounds.map(b => b[1]));
+		max.add(shift).add(new THREE.Vector3(100, 300, 100));
+		max.x = max.z = Math.max(max.x, max.z);
+		this.#segments.forEach(s => [s.left1, s.right1].forEach(p => p.add(shift)));
+		return new Track(this.#segments, max);
 	}
 }
 
