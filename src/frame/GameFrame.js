@@ -10,6 +10,7 @@ import UiComponent from '../ui/UiComponent.js';
 class GameFrame extends UiComponent {
 	#scene;
 	#camera;
+	#directionalLight;
 
 	#track;
 	#playerCar;
@@ -28,11 +29,22 @@ class GameFrame extends UiComponent {
 
 	reset(track, carParams) {
 		this.#scene.clear();
-		let light1 = new THREE.PointLight(0xffffff, 1, 0);
-		light1.position.set(0, 30, 0);
-		this.#scene.add(light1);
-		let ambientLight = new THREE.AmbientLight(0xAAAAAA);
+
+		this.#directionalLight = new THREE.DirectionalLight(0xffffff, .4);
+		this.#directionalLight.castShadow = true;
+		this.#directionalLight.shadow.mapSize.set(4096, 4096);
+		this.#directionalLight.shadow.camera.left = -320;
+		this.#directionalLight.shadow.camera.right = 320;
+		this.#directionalLight.shadow.camera.top = 320;
+		this.#directionalLight.shadow.camera.bottom = -320;
+		this.#directionalLight.shadow.camera.near = 10;
+		this.#directionalLight.shadow.camera.far = 600;
+		this.#scene.add(this.#directionalLight);
+		this.#scene.add(this.#directionalLight.target);
+
+		let ambientLight = new THREE.AmbientLight(0xffffff, .4);
 		this.#scene.add(ambientLight);
+
 		this.#camera.reset();
 
 		this.#track = track;
@@ -80,6 +92,8 @@ class GameFrame extends UiComponent {
 		this.#addedEntities = [];
 
 		this.#camera.follow(this.#playerCar.position);
+		this.#directionalLight.position.copy(this.#playerCar.position).setComponent(1, 500);
+		this.#directionalLight.target.position.copy(this.#playerCar.position).setComponent(1, 0).add(new THREE.Vector3(50, 0, 30));
 	}
 
 	paintUi(uiTexture) {

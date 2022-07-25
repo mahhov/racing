@@ -15,6 +15,7 @@ class Render {
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize(width, height);
 		this.renderer.autoClear = false;
+		this.renderer.shadowMap.enabled = true;
 		document.body.appendChild(this.canvas);
 
 		this.scene = new THREE.Scene();

@@ -37,25 +37,26 @@ class Car extends GameEntity {
 	static createMesh() {
 		const WIDTH_HALF = 1.5, LENGTH_HALF = 2.5;
 		const TIRE_THICKNESS = .5, TIRE_WIDTH = 1;
-		let material = new THREE.MeshPhongMaterial({color: 0x00ff00});
-		let group = new THREE.Group();
+		let material = new THREE.MeshPhongMaterial({color: 0x00ff00, shadowSide: THREE.DoubleSide});
 		let bodyMesh = meshFromVectors(trapezoid(
 			new TrapezoidParams([WIDTH_HALF, .5, -LENGTH_HALF], 3, 5),
 			new TrapezoidParams([WIDTH_HALF, 1.25, -LENGTH_HALF], 3, 5),
 			new TrapezoidParams([1, 1.75, -2], 2, 3)), material);
-		group.add(bodyMesh);
 		let backLeftTireMesh = meshFromVectors(cube([TIRE_THICKNESS / 2, 0, -TIRE_WIDTH / 2], TIRE_THICKNESS, TIRE_WIDTH, TIRE_WIDTH), material);
 		backLeftTireMesh.position.copy(new THREE.Vector3(-WIDTH_HALF, 0, -LENGTH_HALF));
-		group.add(backLeftTireMesh);
 		let backRightTireMesh = backLeftTireMesh.clone();
 		backRightTireMesh.position.copy(new THREE.Vector3(WIDTH_HALF, 0, -LENGTH_HALF));
-		group.add(backRightTireMesh);
 		let frontLeftTireMesh = backLeftTireMesh.clone();
 		frontLeftTireMesh.position.copy(new THREE.Vector3(-WIDTH_HALF, 0, LENGTH_HALF - .5));
-		group.add(frontLeftTireMesh);
 		let frontRightTireMesh = backLeftTireMesh.clone();
 		frontRightTireMesh.position.copy(new THREE.Vector3(WIDTH_HALF, 0, LENGTH_HALF - .5));
-		group.add(frontRightTireMesh);
+
+		let group = new THREE.Group();
+		[bodyMesh, backLeftTireMesh, backRightTireMesh, frontLeftTireMesh, frontRightTireMesh]
+			.forEach(mesh => {
+				mesh.castShadow = true;
+				group.add(mesh);
+			});
 		return group;
 	}
 

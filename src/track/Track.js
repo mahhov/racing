@@ -6,20 +6,20 @@ import {randInt} from '../util/util.js';
 
 class Track extends GameEntity {
 	segments;
+	size;
 	startPosition;
 	startDirection;
 	texture;
 
-	constructor(segments, maxBound) {
-		let [width, height, length] = maxBound.toArray();
-		super(Track.createMesh(width, height, length, segments));
-		this.texture = Track.createTexture(width, length, segments);
+	constructor(segments, size) {
+		super(Track.createMesh(...size.toArray(), segments));
 		this.segments = segments;
+		this.size = size;
 		this.startPosition = segments[0].left1.clone().add(segments[0].bottom.multiplyScalar(.5)).add(segments[0].left.setLength(50));
 		this.startDirection = segments[0].left.clone().normalize();
+		this.texture = Track.createTexture(size.x, size.z, segments);
 	}
 
-	// todo shadow
 	// todo intersection based track connections
 
 	static createTexture(width, length, segments) {
@@ -53,6 +53,7 @@ class Track extends GameEntity {
 		segments.forEach((segment, i) => {
 			let material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, color: 155 + Math.floor(100 * i / segments.length)});
 			let segmentMesh = meshFromVectors(rect(segment.left1.toArray(), segment.right1.toArray(), segment.right2.toArray(), segment.left2.toArray()), material);
+			segmentMesh.receiveShadow = true;
 			group.add(segmentMesh);
 		});
 
