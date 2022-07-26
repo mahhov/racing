@@ -21,25 +21,30 @@ class Track extends GameEntity {
 	}
 
 	static createTexture(width, length, segments) {
-		let texture = Track.createTextureCheck(width, length);
+		let max = Math.max(width, length);
+		let shiftX = (max - width) / 2;
+		let shiftY = (max - length) / 2;
+
+		let texture = Track.createTextureCheck(max, max);
 
 		texture.ctx.fillStyle = '#00f';
 		segments.forEach((segment, i) => {
 			texture.ctx.fillStyle = `rgb(0,0,${155 + Math.floor(100 * i / segments.length)})`;
 			texture.ctx.beginPath();
-			texture.ctx.moveTo(segment.left1.x, segment.left1.z);
-			texture.ctx.lineTo(segment.right1.x, segment.right1.z);
-			texture.ctx.lineTo(segment.right2.x, segment.right2.z);
-			texture.ctx.lineTo(segment.left2.x, segment.left2.z);
+			texture.ctx.moveTo(segment.left1.x + shiftX, segment.left1.z + shiftY);
+			texture.ctx.lineTo(segment.right1.x + shiftX, segment.right1.z + shiftY);
+			texture.ctx.lineTo(segment.right2.x + shiftX, segment.right2.z + shiftY);
+			texture.ctx.lineTo(segment.left2.x + shiftX, segment.left2.z + shiftY);
 			texture.ctx.fill();
 		});
+		texture.ctx.lineWidth = 5;
 		texture.ctx.strokeStyle = '#fff';
 		segments.forEach(segment => {
 			texture.ctx.beginPath();
-			texture.ctx.moveTo(segment.left1.x, segment.left1.z);
-			texture.ctx.lineTo(segment.left2.x, segment.left2.z);
-			texture.ctx.moveTo(segment.right1.x, segment.right1.z);
-			texture.ctx.lineTo(segment.right2.x, segment.right2.z);
+			texture.ctx.moveTo(segment.left1.x + shiftX, segment.left1.z + shiftY);
+			texture.ctx.lineTo(segment.left2.x + shiftX, segment.left2.z + shiftY);
+			texture.ctx.moveTo(segment.right1.x + shiftX, segment.right1.z + shiftY);
+			texture.ctx.lineTo(segment.right2.x + shiftX, segment.right2.z + shiftY);
 			texture.ctx.stroke();
 		});
 
@@ -73,10 +78,7 @@ class Track extends GameEntity {
 		let SQUARE_SIZE = 30;
 		let texture = new DynamicTexture(width, length);
 		texture.ctx.fillStyle = '#f00';
-		for (let x = 0; x < width / SQUARE_SIZE; x++)
-			for (let y = 0; y < length / SQUARE_SIZE; y++)
-				if ((x + y) % 2)
-					texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+		for (let x = 0; x < width / SQUARE_SIZE; x++) for (let y = 0; y < length / SQUARE_SIZE; y++) if ((x + y) % 2) texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
 		return texture;
 	}
 }
