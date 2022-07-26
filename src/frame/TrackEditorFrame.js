@@ -15,7 +15,7 @@ class TrackEditorFrame extends UiComponent {
 
 	#downCoord = null;
 	#curCoord = null;
-	#lines = [];
+	#points = [];
 
 	constructor(input) {
 		super(input);
@@ -27,21 +27,29 @@ class TrackEditorFrame extends UiComponent {
 			this.#curCoord = mouseCoord;
 			if (this.input.getMouseState(0) === Input.states.PRESSED)
 				this.#downCoord = mouseCoord;
-			else if (this.input.getMouseState(0) === Input.states.RELEASED && !TrackEditorFrame.sameCoord(this.#downCoord, mouseCoord)) {
-				this.#lines.push([this.#downCoord, mouseCoord]);
-				this.#downCoord = null;
+			else if (this.input.getMouseState(0) === Input.states.RELEASED) {
+				if (TrackEditorFrame.sameCoord(this.#downCoord, mouseCoord))
+					this.#points.push(this.#downCoord);
+				else {
+					let i = this.#points.findIndex(point => TrackEditorFrame.sameCoord(point, this.#downCoord));
+					if (i !== -1)
+						this.#points.splice(i+1, 0, mouseCoord);
+					this.#downCoord = null;
+				}
 			}
 			if (this.input.getMouseState(2, true))
-				this.#lines = this.#lines.filter(line =>
-					!line.some(xy => TrackEditorFrame.sameCoord(xy, mouseCoord)));
+				this.#points = this.#points.filter(point => !TrackEditorFrame.sameCoord(point, mouseCoord));
 		});
 		this.addUiComponent(new UiButton(input, 'Back', .2, .92))
 			.addListener('click', () => this.emit('back'));
 		this.addUiComponent(new UiButton(input, 'Clear', .5, .92))
-			.addListener('click', () => this.#lines = []);
+			.addListener('click', () => this.#points = []);
 		this.addUiComponent(new UiButton(input, 'Export', .8, .92))
 			.addListener('click', () =>
-				console.log(this.#lines.map(line => `.lineAt(${line.flat().map(c => (this.#gridSize - c) * 100).join(', ')})`).join('\n')));
+				console.log(this.#points
+					.map(point => point.map(c => (this.#gridSize - c) * 100))
+					.map(point => `.point(${point[0]}, 0, ${point[1]})`)
+					.join('\n')));
 	}
 
 	static sameCoord(coord1, coord2) {
@@ -60,8 +68,12 @@ class TrackEditorFrame extends UiComponent {
 			for (let y = 0; y < this.#gridSize; y++)
 				this.#drawPoint([x, y], '#fff');
 
-		this.#lines.forEach(line =>
-			this.#drawLine(line[0], line[1], '#fff', 5));
+		this.#points.forEach((point, i, a) =>
+			this.#drawLine(point, a[(i + 1) % a.length], '#fff', 5));
+		this.#points.forEach(point =>
+			this.#drawPoint(point, '#00f'));
+		if (this.#points.length)
+			this.#drawPoint(this.#points[this.#points.length - 1], '#ff0');
 
 		if (this.#downCoord)
 			this.#drawLine(this.#downCoord, this.#curCoord, '#f00', 5);

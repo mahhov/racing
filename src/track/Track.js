@@ -78,7 +78,10 @@ class Track extends GameEntity {
 		let SQUARE_SIZE = 30;
 		let texture = new DynamicTexture(width, length);
 		texture.ctx.fillStyle = '#f00';
-		for (let x = 0; x < width / SQUARE_SIZE; x++) for (let y = 0; y < length / SQUARE_SIZE; y++) if ((x + y) % 2) texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+		for (let x = 0; x < width / SQUARE_SIZE; x++)
+			for (let y = 0; y < length / SQUARE_SIZE; y++)
+				if ((x + y) % 2)
+					texture.ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
 		return texture;
 	}
 }
