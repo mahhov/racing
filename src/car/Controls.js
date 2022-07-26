@@ -7,7 +7,6 @@ class Controls {
 	sprint = false;
 
 	updatePlayer(input) {
-		// todo when going backwards via momentum rather than 'd', left & right are inverted
 		this.forward = input.getKey('w', true) ? 1 : (input.getKey('s', true) ? -.5 : 0);
 		this.right = input.getKey('d', true) ? 1 : (input.getKey('a', true) ? -1 : 0);
 		this.brake = input.getKey(' ', true);

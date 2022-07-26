@@ -20,8 +20,6 @@ class Track extends GameEntity {
 		this.texture = Track.createTexture(size.x, size.z, segments);
 	}
 
-	// todo intersection based track connections
-
 	static createTexture(width, length, segments) {
 		let texture = Track.createTextureCheck(width, length);
 
@@ -53,6 +51,7 @@ class Track extends GameEntity {
 		segments.forEach((segment, i) => {
 			let material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, color: 155 + Math.floor(100 * i / segments.length)});
 			let segmentMesh = meshFromVectors(rect(segment.left1.toArray(), segment.right1.toArray(), segment.right2.toArray(), segment.left2.toArray()), material);
+			// todo: segmentMesh.castShadow = true;
 			segmentMesh.receiveShadow = true;
 			group.add(segmentMesh);
 		});

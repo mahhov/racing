@@ -51,5 +51,3 @@ class CarFrame extends UiComponent {
 }
 
 export default CarFrame;
-
-// todo show preview of stats
