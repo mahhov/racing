@@ -27,7 +27,8 @@ class IntersectionManager {
 	}
 
 	// returns null if the 2 lines don't intersect. Otherwise, returns their intersection point and direction of line2
-	static #test2Lines(line1, line2) {
+	// assumes y=0 for all points
+	static test2Lines(line1, line2, extend = false) {
 		// check 0 lines
 		if (!line1.distanceSq() || !line2.distanceSq())
 			return null;
@@ -43,26 +44,22 @@ class IntersectionManager {
 		let p1 = (delta2.x * delta3.z - delta2.z * delta3.x) / denominator;
 		let p2 = (delta1.x * delta3.z - delta1.z * delta3.x) / denominator;
 		// check intersection in range
-		if (p1 < 0 || p1 > 1 || p2 < 0 || p2 > 1)
+		if (!extend && (p1 < 0 || p1 > 1 || p2 < 0 || p2 > 1))
 			return null;
 
 		p1 = Math.max(p1 - .0001, 0);
 		return new Intersection(true, line1.at(p1, new THREE.Vector3()), p1, delta2, Math.sign(-denominator));
 	}
 
-	static #lineProjectedHorizontal(...vectors) {
-		return new THREE.Line3(...vectors.map(IntersectionManager.#projectedHorizontal));
-	}
-
-	static #projectedHorizontal(vector) {
+	static flat(vector) {
 		return vector.clone().setComponent(1, 0);
 	}
 
 	#getGround(horizPosition, trackSegmentIndex) {
 		let segment = this.#track.segments[trackSegmentIndex];
 		horizPosition = segment.subLeft1(horizPosition);
-		let left = IntersectionManager.#projectedHorizontal(segment.left);
-		let bottom = IntersectionManager.#projectedHorizontal(segment.bottom);
+		let left = IntersectionManager.flat(segment.left);
+		let bottom = IntersectionManager.flat(segment.bottom);
 		let leftLength = horizPosition.clone().projectOnVector(left).length() / left.length();
 		let bottomLength = horizPosition.clone().projectOnVector(bottom).length() / bottom.length();
 		return segment.left1.y + leftLength * segment.left.y + bottomLength * segment.bottom.y;
@@ -71,12 +68,11 @@ class IntersectionManager {
 	canMove(position, delta, trackSegmentIndex) {
 		let segmentDirection = 0;
 		let lapped = 0;
-		let movementLine = IntersectionManager.#lineProjectedHorizontal(position, position.clone().add(delta));
+		let movementLine = new THREE.Line3(IntersectionManager.flat(position), IntersectionManager.flat(position).add(delta));
 		while (true) {
 			let segment = this.#track.segments[trackSegmentIndex];
-			for (let segmentVectors of [[segment.left1, segment.left2], [segment.right1, segment.right2]]) {
-				let segmentLine = IntersectionManager.#lineProjectedHorizontal(...segmentVectors);
-				let intersection = IntersectionManager.#test2Lines(movementLine, segmentLine);
+			for (let segmentLine of [segment.flatLeftLine, segment.flatRightLine]) {
+				let intersection = IntersectionManager.test2Lines(movementLine, segmentLine);
 				if (intersection) {
 					intersection.groundY = this.#getGround(intersection.horizPosition, trackSegmentIndex);
 					intersection.trackSegmentIndex = trackSegmentIndex;
@@ -85,8 +81,8 @@ class IntersectionManager {
 				}
 			}
 			if (segmentDirection !== -1) {
-				let segmentLine = IntersectionManager.#lineProjectedHorizontal(segment.left2, segment.right2);
-				let intersection = IntersectionManager.#test2Lines(movementLine, segmentLine);
+				let segmentLine = new THREE.Line3(segment.left2, segment.right2);
+				let intersection = IntersectionManager.test2Lines(movementLine, segmentLine);
 				if (intersection && intersection.sign === -1) {
 					segmentDirection = 1;
 					trackSegmentIndex++;
@@ -98,8 +94,8 @@ class IntersectionManager {
 				}
 			}
 			if (segmentDirection !== 1) {
-				let segmentLine = IntersectionManager.#lineProjectedHorizontal(segment.left1, segment.right1);
-				let intersection = IntersectionManager.#test2Lines(movementLine, segmentLine);
+				let segmentLine = new THREE.Line3(segment.left1, segment.right1);
+				let intersection = IntersectionManager.test2Lines(movementLine, segmentLine);
 				if (intersection && intersection.sign === 1) {
 					segmentDirection = -1;
 					trackSegmentIndex--;
