@@ -56,32 +56,31 @@ class TrackEditorFrame extends UiComponent {
 
 		this.#texture.ctx.clearRect(0, 0, this.#canvasSize, this.#canvasSize);
 
-		this.#texture.ctx.fillStyle = '#fff';
 		for (let x = 0; x < this.#gridSize; x++)
 			for (let y = 0; y < this.#gridSize; y++)
-				this.#texture.ctx.fillRect(...this.#gridToCanvasCoord([x, y]).map(c => c - 2), 4, 4);
+				this.#drawPoint([x, y], '#fff');
 
-		this.#texture.ctx.lineWidth = 5;
-		if (this.#lines.length) {
-			this.#texture.ctx.strokeStyle = '#fff';
-			this.#texture.ctx.beginPath();
-			this.#lines.forEach(line => {
-				this.#texture.ctx.moveTo(...this.#gridToCanvasCoord(line[0]));
-				this.#texture.ctx.lineTo(...this.#gridToCanvasCoord(line[1]));
-			});
-			this.#texture.ctx.stroke();
-		}
+		this.#lines.forEach(line =>
+			this.#drawLine(line[0], line[1], '#fff', 5));
 
-		if (this.#downCoord) {
-			this.#texture.ctx.strokeStyle = '#f00';
-			this.#texture.ctx.beginPath();
-			this.#texture.ctx.moveTo(...this.#gridToCanvasCoord(this.#downCoord));
-			this.#texture.ctx.lineTo(...this.#gridToCanvasCoord(this.#curCoord));
-			this.#texture.ctx.stroke();
-		} else if (this.#curCoord) {
-			this.#texture.ctx.fillStyle = '#f00';
-			this.#texture.ctx.fillRect(...this.#gridToCanvasCoord(this.#curCoord).map(c => c - 2), 4, 4);
-		}
+		if (this.#downCoord)
+			this.#drawLine(this.#downCoord, this.#curCoord, '#f00', 5);
+		if (this.#curCoord)
+			this.#drawPoint(this.#curCoord, '#f00');
+	}
+
+	#drawLine(point1, point2, color, width) {
+		this.#texture.ctx.strokeStyle = color;
+		this.#texture.ctx.lineWidth = width;
+		this.#texture.ctx.beginPath();
+		this.#texture.ctx.moveTo(...this.#gridToCanvasCoord(point1));
+		this.#texture.ctx.lineTo(...this.#gridToCanvasCoord(point2));
+		this.#texture.ctx.stroke();
+	}
+
+	#drawPoint(point, color) {
+		this.#texture.ctx.fillStyle = color;
+		this.#texture.ctx.fillRect(...this.#gridToCanvasCoord(point).map(c => c - 2), 4, 4);
 	}
 
 	get #space() {
