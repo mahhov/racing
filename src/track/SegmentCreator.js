@@ -18,7 +18,7 @@ class Segment {
 
 	static fromLine(p1, w1, p2, w2) {
 		let dir = p2.clone().sub(p1).normalize();
-		let dir90 = dir.clone().projectOnPlane(UP).applyAxisAngle(UP, radian(90));
+		let dir90 = dir.clone().projectOnPlane(UP).applyAxisAngle(UP, radian(90)).normalize();
 		let left1 = p1.clone().addScaledVector(dir90, w1);
 		let right1 = p1.clone().addScaledVector(dir90, -w1);
 		let left2 = p2.clone().addScaledVector(dir90, w2);
