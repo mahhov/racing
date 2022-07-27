@@ -42,6 +42,12 @@ class Segment {
 		return this.subRight1(this.right2);
 	}
 
+	// like bottom, but perpendicular to left and flat
+	get flatLeft90() {
+		// let t = this.left.clone().projectOnPlane(UP).applyAxisAngle(UP, radian(-90));
+		return this.bottom.clone().projectOnPlane(this.left);
+	}
+
 	get bottom() {
 		return this.subLeft1(this.right1);
 	}
@@ -79,13 +85,13 @@ class SegmentCreator {
 			let nextSegment = a[j];
 			let leftIntersection = IntersectionManager.test2Lines(segment.flatLeftLine, nextSegment.flatLeftLine, true);
 			if (leftIntersection) {
-				segment.left2 = segment.left1.clone().addScaledVector(segment.left, leftIntersection.distance);
-				nextSegment.left1 = segment.left2.clone();
+				segment.left2 = segment.left1.clone().addScaledVector(segment.left, leftIntersection.distance1);
+				nextSegment.left1 = nextSegment.left1.clone().addScaledVector(nextSegment.left, leftIntersection.distance2);
 			}
 			let rightIntersection = IntersectionManager.test2Lines(segment.flatRightLine, nextSegment.flatRightLine, true);
 			if (rightIntersection) {
-				segment.right2 = segment.right1.clone().addScaledVector(segment.right, rightIntersection.distance);
-				nextSegment.right1 = segment.right2.clone();
+				segment.right2 = segment.right1.clone().addScaledVector(segment.right, rightIntersection.distance1);
+				nextSegment.right1 = nextSegment.right1.clone().addScaledVector(nextSegment.right, rightIntersection.distance2);
 			}
 		});
 

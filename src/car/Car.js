@@ -125,8 +125,8 @@ class Car extends GameEntity {
 				break;
 			} else {
 				anyIntersection = true;
-				remaining *= (1 - intersection.distance);
-				this.#position.addScaledVector(velocity, intersection.distance);
+				remaining *= (1 - intersection.distance1);
+				this.#position.addScaledVector(velocity, intersection.distance1);
 				this.#velocity.projectOnVector(intersection.direction);
 				this.#direction.projectOnVector(intersection.direction).normalize();
 			}

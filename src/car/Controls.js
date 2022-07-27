@@ -20,7 +20,7 @@ class Controls {
 
 		let intersection = intersectionManager.canMove(position, velocity.clone().multiplyScalar(100), trackSegmentIndex);
 		if (intersection.intersected) {
-			let distance = intersection.distance * 100;
+			let distance = intersection.distance1 * 100;
 			let cross = intersection.direction.normalize().cross(velocity.clone().normalize().add(direction).normalize()).y;
 			if (distance < 80)
 				this.right = Math.sign(cross) * clamp(1 - distance / 80, 0, 1);

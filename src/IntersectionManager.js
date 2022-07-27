@@ -3,17 +3,19 @@ import * as THREE from 'three';
 class Intersection {
 	intersected; // whether there was an intersection
 	horizPosition; // position vector of the intersection or end of movement if no intersection; y = 0
-	distance; // proportional distance (0 to 1) until intersection; Infinity if no intersection
+	distance1; // proportional distance (0 to 1) until intersection; Infinity if no intersection
+	distance2; // proportional distance (0 to 1) until intersection; Infinity if no intersection
 	direction; // direction vector of the intersected line; null if no intersection
 	sign; // sign of cross product of the 2 intersected lines
 	groundY; // y position of track at horizPosition
 	trackSegmentIndex; // trackSegmentIndex
 	lapped; // 0 = no lap, <0 = reverse, >0 = forward
 
-	constructor(intersected, horizPosition, distance, direction, sign) {
+	constructor(intersected, horizPosition, distance1, distance2, direction, sign) {
 		this.intersected = intersected;
 		this.horizPosition = horizPosition;
-		this.distance = distance;
+		this.distance1 = distance1;
+		this.distance2 = distance2;
 		this.direction = direction;
 		this.sign = sign;
 	}
@@ -48,7 +50,7 @@ class IntersectionManager {
 			return null;
 
 		p1 = Math.max(p1 - .0001, 0);
-		return new Intersection(true, line1.at(p1, new THREE.Vector3()), p1, delta2, Math.sign(-denominator));
+		return new Intersection(true, line1.at(p1, new THREE.Vector3()), p1, p2, delta2, Math.sign(-denominator));
 	}
 
 	static flat(vector) {
@@ -59,10 +61,8 @@ class IntersectionManager {
 		let segment = this.#track.segments[trackSegmentIndex];
 		horizPosition = segment.subLeft1(horizPosition);
 		let left = IntersectionManager.flat(segment.left);
-		let bottom = IntersectionManager.flat(segment.bottom);
-		let leftLength = horizPosition.clone().projectOnVector(left).length() / left.length();
-		let bottomLength = horizPosition.clone().projectOnVector(bottom).length() / bottom.length();
-		return segment.left1.y + leftLength * segment.left.y + bottomLength * segment.bottom.y;
+		let leftLength = horizPosition.dot(left) / left.lengthSq();
+		return segment.left1.y + leftLength * segment.left.y;
 	}
 
 	canMove(position, delta, trackSegmentIndex) {
@@ -106,7 +106,7 @@ class IntersectionManager {
 					continue;
 				}
 			}
-			let intersection = new Intersection(false, movementLine.at(1, new THREE.Vector3()), Infinity, null, 0);
+			let intersection = new Intersection(false, movementLine.at(1, new THREE.Vector3()), Infinity, Infinity, null, 0);
 			intersection.groundY = this.#getGround(intersection.horizPosition, trackSegmentIndex);
 			intersection.trackSegmentIndex = trackSegmentIndex;
 			intersection.lapped = lapped;
