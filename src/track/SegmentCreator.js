@@ -68,6 +68,12 @@ class Segment {
 class SegmentCreator {
 	#xyzws = [];
 
+	static trackFromPoints(points) {
+		let segmentCreator = new SegmentCreator();
+		points.forEach(point => segmentCreator.point(...point));
+		return segmentCreator.done();
+	}
+
 	point(x, y, z, w = 30) {
 		this.#xyzws.push([x, y, z, w]);
 		return this;
@@ -75,7 +81,7 @@ class SegmentCreator {
 
 	done() {
 		let segments = this.#xyzws
-			.map(xyzw => [new THREE.Vector3(...xyzw), xyzw[3]])
+			.map(xyzw => [new THREE.Vector3(...xyzw), xyzw[3] || 30])
 			.map((p, i, a) => {
 				let j = (i + 1) % a.length;
 				return Segment.fromLine(...p, ...a[j]);
