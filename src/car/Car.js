@@ -92,9 +92,12 @@ class Car extends GameEntity {
 
 		let turnSpeed = turn * clamp(this.#velocity.length(), 0, 1) * (this.#controls.brake ? 1.5 : 1);
 		this.#direction.applyAxisAngle(this.#dirUp, -turnSpeed * this.#controls.right * dirSign);
-		if (this.#grounded)
-			this.#direction.projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal);
-		else
+		if (this.#grounded) {
+			let oldDirection = this.#direction.clone();
+			this.#direction.projectOnPlane(this.#track.segments[this.#trackSegmentIndex].normal).normalize();
+			if (oldDirection.projectOnPlane(UP).dot(this.#direction.clone().projectOnPlane(UP)) < 0)
+				this.#direction.multiplyScalar(-1);
+		} else
 			this.#direction.setComponent(1, 0).normalize();
 
 		let accelerate = acceleration * this.#controls.forward;
