@@ -10,13 +10,14 @@ class Controls {
 		this.forward = input.getKey('w', true) ? 1 : (input.getKey('s', true) ? -.5 : 0);
 		this.right = input.getKey('d', true) ? 1 : (input.getKey('a', true) ? -1 : 0);
 		this.brake = input.getKey(' ', true);
-		this.sprint = input.getKey('shift', true);
+		this.sprint = !this.brake;
 	}
 
 	updateAi(position, velocity, direction, trackSegmentIndex, intersectionManager) {
 		this.forward = 1;
 		this.right = 0;
 		this.brake = false;
+		this.sprint = true;
 
 		let intersection = intersectionManager.canMove(position, velocity.clone().multiplyScalar(100), trackSegmentIndex);
 		if (intersection.intersected) {
