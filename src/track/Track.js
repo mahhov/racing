@@ -53,10 +53,25 @@ class Track extends GameEntity {
 
 	static createMesh(width, height, length, segments) {
 		let group = new THREE.Group();
+
 		segments.forEach((segment, i) => {
-			let material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, color: 155 + Math.floor(100 * i / segments.length)});
-			let segmentMesh = meshFromVectors(rect(segment.left1.toArray(), segment.right1.toArray(), segment.right2.toArray(), segment.left2.toArray()), material);
-			// todo: segmentMesh.castShadow = true;
+			let texture = new DynamicTexture(100, 100);
+			texture.ctx.fillStyle = `rgb(${randInt(170)}, ${randInt(170)}, ${randInt(170)})`;
+			texture.ctx.fillRect(0, 0, 100, 100);
+			texture.ctx.strokeStyle = 'white';
+			texture.ctx.beginPath();
+			texture.ctx.moveTo(5, 5);
+			texture.ctx.lineTo(5, 95);
+			texture.ctx.moveTo(95, 5);
+			texture.ctx.lineTo(95, 95);
+			texture.ctx.stroke();
+			let material = texture.phongMaterial;
+
+			let segmentMesh = meshFromVectors(
+				rect(segment.left1.toArray(), segment.right1.toArray(), segment.right2.toArray(), segment.left2.toArray()),
+				material,
+				rect([0, 0], [1, 0], [1, 1], [0, 1]),
+			);
 			segmentMesh.receiveShadow = true;
 			group.add(segmentMesh);
 		});

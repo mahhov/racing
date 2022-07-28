@@ -48,10 +48,11 @@ const trapezoid = (...trapezoidParams) => {
 const cube = (b1, w, h, l) =>
 	trapezoid(new TrapezoidParams(b1, w, l), new TrapezoidParams(sum(b1, [0, h, 0]), w, l));
 
-const meshFromVectors = (vertices, material) => {
-	vertices = new Float32Array(vertices);
+const meshFromVectors = (vertices, material, uvs = null) => {
 	let geometry = new THREE.BufferGeometry();
-	geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+	geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
+	if (uvs)
+		geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
 	geometry.computeVertexNormals();
 	return new THREE.Mesh(geometry, material);
 };
