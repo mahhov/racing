@@ -49,8 +49,9 @@ class IntersectionManager {
 		if (!extend && (p1 < 0 || p1 > 1 || p2 < 0 || p2 > 1))
 			return null;
 
-		p1 = Math.max(p1 - .0001, 0);
-		return new Intersection(true, line1.at(p1, new THREE.Vector3()), p1, p2, delta2, Math.sign(-denominator));
+		if (!extend)
+			p1 = Math.max(p1 - .0001, 0);
+		return new Intersection(true, line1.at(Math.max(p1 - .0001, 0), new THREE.Vector3()), p1, p2, delta2, Math.sign(-denominator));
 	}
 
 	static flat(vector) {
