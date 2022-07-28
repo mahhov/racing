@@ -56,7 +56,7 @@ class Track extends GameEntity {
 
 		segments.forEach((segment, i) => {
 			let texture = new DynamicTexture(100, 100);
-			texture.ctx.fillStyle = `rgb(${randInt(170)}, ${randInt(170)}, ${randInt(170)})`;
+			texture.ctx.fillStyle = i === segments.length - 1 ? '#fff' : `rgb(${randInt(170)}, ${randInt(170)}, ${randInt(170)})`;
 			texture.ctx.fillRect(0, 0, 100, 100);
 			let material = texture.phongMaterial;
 
