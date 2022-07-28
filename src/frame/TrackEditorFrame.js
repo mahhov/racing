@@ -33,7 +33,7 @@ class TrackEditorFrame extends UiComponent {
 				else {
 					let i = this.#points.findIndex(point => TrackEditorFrame.sameCoord(point, this.#downCoord));
 					if (i !== -1)
-						this.#points.splice(i+1, 0, mouseCoord);
+						this.#points.splice(i + 1, 0, mouseCoord);
 					this.#downCoord = null;
 				}
 			}
@@ -46,10 +46,13 @@ class TrackEditorFrame extends UiComponent {
 			.addListener('click', () => this.#points = []);
 		this.addUiComponent(new UiButton(input, 'Export', .8, .92))
 			.addListener('click', () =>
-				console.log(this.#points
-					.map(point => point.map(c => (this.#gridSize - c) * 100))
-					.map(point => `.point(${point[0]}, 0, ${point[1]})`)
-					.join('\n')));
+				console.log([
+					`new TrackInfo('', 0, [`,
+					...this.#points
+						.map(point => point.map(c => (this.#gridSize - c) * 100))
+						.map(point => `  [${point[0]}, 0, ${point[1]}],`),
+					']),',
+				].join('\n')));
 	}
 
 	static sameCoord(coord1, coord2) {
