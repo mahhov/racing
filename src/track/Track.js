@@ -58,13 +58,6 @@ class Track extends GameEntity {
 			let texture = new DynamicTexture(100, 100);
 			texture.ctx.fillStyle = `rgb(${randInt(170)}, ${randInt(170)}, ${randInt(170)})`;
 			texture.ctx.fillRect(0, 0, 100, 100);
-			texture.ctx.strokeStyle = 'white';
-			texture.ctx.beginPath();
-			texture.ctx.moveTo(5, 5);
-			texture.ctx.lineTo(5, 95);
-			texture.ctx.moveTo(95, 5);
-			texture.ctx.lineTo(95, 95);
-			texture.ctx.stroke();
 			let material = texture.phongMaterial;
 
 			let segmentMesh = meshFromVectors(
@@ -76,13 +69,25 @@ class Track extends GameEntity {
 			group.add(segmentMesh);
 		});
 
-		let skyTexture = new DynamicTexture(400, 400);
-		const MAX_SIZE = 40;
-		for (let i = 0; i < 200; i++) {
-			skyTexture.ctx.strokeStyle = `rgb(${randInt(256)}, ${randInt(256)}, ${randInt(256)})`;
-			skyTexture.ctx.strokeRect(randInt(skyTexture.width - MAX_SIZE), randInt(skyTexture.height - MAX_SIZE), randInt(MAX_SIZE), randInt(MAX_SIZE));
-		}
-		let skyBox = new THREE.Mesh(new THREE.BoxGeometry(width, height, length), skyTexture.skyMaterial);
+		let skyMaterials = [
+			[length, height], // left & right
+			[length, height],
+			[width, length], // top & bottom
+			[width, length],
+			[width, height], // front & back
+			[width, height],
+		].map(dimension => {
+			let skyTexture = new DynamicTexture(...dimension);
+			skyTexture.ctx.strokeStyle = `rgb(${100 + randInt(156)}, ${100 + randInt(156)}, ${100 + randInt(156)})`;
+			const MAX_SIZE = 20;
+			for (let i = 0; i < length * height / 3000; i++) {
+				skyTexture.ctx.strokeRect(
+					randInt(skyTexture.width - MAX_SIZE), randInt(skyTexture.height - MAX_SIZE),
+					randInt(MAX_SIZE), randInt(MAX_SIZE));
+			}
+			return skyTexture.skyMaterial;
+		});
+		let skyBox = new THREE.Mesh(new THREE.BoxGeometry(width, height, length), skyMaterials);
 		skyBox.position.set(width / 2, -80, length / 2);
 		group.add(skyBox);
 
