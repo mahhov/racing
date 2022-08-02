@@ -18,6 +18,14 @@ class UiRect extends UiComponent {
 		this.#outlineColor = outlineColor;
 	}
 
+	set left(left) {
+		this.#left = left;
+	}
+
+	set width(width) {
+		this.#width = width;
+	}
+
 	set fillColor(fillColor) {
 		this.#fillColor = fillColor;
 	}
