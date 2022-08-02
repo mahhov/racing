@@ -12,7 +12,7 @@ class PauseFrame extends UiComponent {
 		this.#gameFrame = gameFrame;
 
 		this.addUiComponent(new UiRect(0, 0, 1, 1, 'rgba(0,0,0,.5)', null));
-		this.addUiComponent(new UiText('Paused', .5, .35, 'center','bottom', '#fff', '60px arial'));
+		this.addUiComponent(new UiText('Paused', .5, .35, 'center', 'bottom', '#fff', '60px arial'));
 		this.addUiComponent(new UiButton(input, 'Resume', .5, .4))
 			.addListener('click', () => this.emit('resume'));
 		this.addUiComponent(new UiButton(input, 'Abandon', .5, .46))

@@ -51,7 +51,7 @@ const CAR_INFOS = [
 	new CarInfo('Default', 0,
 		new CarParams(.03, .05, .1, radian(2), -.02, .01, .01, .95)),
 	new CarInfo('Power', 1000,
-		new CarParams(.03, .05, .15, radian(2), -.02, .01, .01, .95)),
+		new CarParams(.03, .05, .15, radian(2), -.02, .01, .01, .75)),
 	new CarInfo('Good Handling', 1000,
 		new CarParams(.06, .1, .16, radian(2.5), -.02, .01, .01, 0)),
 	new CarInfo('No Steering', 1000,
