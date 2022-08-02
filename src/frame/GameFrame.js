@@ -72,7 +72,7 @@ class GameFrame extends UiComponent {
 	}
 
 	update() {
-		if (this.input.getKey('p') === Input.states.PRESSED)
+		if (this.input.getKey('p') === Input.states.PRESSED || this.input.getKey('escape') === Input.states.PRESSED)
 			this.emit('pause');
 
 		if (!this.#done && (this.#playerCar.done || this.#opponentCar.done)) {

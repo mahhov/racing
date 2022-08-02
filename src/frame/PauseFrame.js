@@ -20,7 +20,7 @@ class PauseFrame extends UiComponent {
 	}
 
 	update() {
-		if (this.input.getKey('p') === Input.states.PRESSED)
+		if (this.input.getKey('p') === Input.states.PRESSED || this.input.getKey('escape') === Input.states.PRESSED)
 			this.emit('resume');
 		super.update();
 	}
