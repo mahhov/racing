@@ -54,7 +54,7 @@ class GameFrame extends UiComponent {
 			carParams, this.#track.startPosition.clone(), this.#track.startDirection.clone());
 		this.#scene.add(this.#playerCar.mesh);
 		this.#opponentCar = new Car(this, this.#track, this.#intersectionManager, new LapManager(1), null,
-			CAR_INFOS[0].carParams, this.#track.startPosition.clone(), this.#track.startDirection.clone());
+			CAR_INFOS[1].carParams, this.#track.startPosition.clone(), this.#track.startDirection.clone());
 		this.#scene.add(this.#opponentCar.mesh);
 
 		this.#done = false;

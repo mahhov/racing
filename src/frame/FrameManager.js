@@ -6,6 +6,7 @@ import CarFrame from './CarFrame.js';
 import EndFrame from './EndFrame.js';
 import GameFrame from './GameFrame.js';
 import PauseFrame from './PauseFrame.js';
+import TrackAndCarFrame from './TrackAndCarFrame.js';
 import TrackEditorFrame from './TrackEditorFrame.js';
 import TrackFrame from './TrackFrame.js';
 
@@ -14,9 +15,11 @@ class FrameManager extends GameEntity {
 	#activeTrackInfo;
 	#activeCarInfo = CAR_INFOS[0];
 
-	#trackFrame;
+
+	#trackAndCarFrame;
+	// #trackFrame;
 	#trackEditorFrame;
-	#carFrame;
+	// #carFrame;
 	#gameFrame;
 	#pauseFrame;
 	#endFrame;
@@ -24,31 +27,35 @@ class FrameManager extends GameEntity {
 
 	constructor(input, scene, camera) {
 		super();
-		this.#trackFrame = new TrackFrame(input, this.#save);
+		this.#trackAndCarFrame = new TrackAndCarFrame(input, this.#save);
+		// this.#trackFrame = new TrackFrame(input, this.#save);
 		this.#trackEditorFrame = new TrackEditorFrame(input);
-		this.#carFrame = new CarFrame(input, this.#save);
+		// this.#carFrame = new CarFrame(input, this.#save);
 		this.#gameFrame = new GameFrame(input, scene, camera);
 		this.#pauseFrame = new PauseFrame(input, this.#gameFrame);
 		this.#endFrame = new EndFrame(input, this.#gameFrame);
 
-		this.#activeFrame = this.#trackFrame;
+		// this.#activeFrame = this.#trackFrame;
+		this.#activeFrame = this.#trackAndCarFrame;
 
-		this.#trackFrame.carText = CAR_INFOS[0].name;
-		this.#trackFrame.addListener('select', trackInfo => {
-			this.#activeTrackInfo = trackInfo;
-			this.#gameFrame.reset(trackInfo.track, this.#activeCarInfo.carParams);
-			this.#activeFrame = this.#gameFrame;
-		});
-		this.#trackFrame.addListener('editor', () => this.#activeFrame = this.#trackEditorFrame);
-		this.#trackFrame.addListener('selectCar', () => this.#activeFrame = this.#carFrame);
+		this.#trackEditorFrame.addListener('back', () => this.#activeFrame = this.#trackAndCarFrame);
 
-		this.#trackEditorFrame.addListener('back', () => this.#activeFrame = this.#trackFrame);
+		// this.#trackFrame.carText = CAR_INFOS[0].name;
+		// this.#trackFrame.addListener('select', trackInfo => {
+		// 	this.#activeTrackInfo = trackInfo;
+		// 	this.#gameFrame.reset(trackInfo.track, this.#activeCarInfo.carParams);
+		// 	this.#activeFrame = this.#gameFrame;
+		// });
+		// this.#trackFrame.addListener('editor', () => this.#activeFrame = this.#trackEditorFrame);
+		// this.#trackFrame.addListener('selectCar', () => this.#activeFrame = this.#carFrame);
 
-		this.#carFrame.addListener('select', carInfo => {
-			this.#activeCarInfo = carInfo;
-			this.#trackFrame.carText = carInfo.name;
-		});
-		this.#carFrame.addListener('selectTrack', () => this.#activeFrame = this.#trackFrame);
+		// this.#trackEditorFrame.addListener('back', () => this.#activeFrame = this.#trackFrame);
+
+		// this.#carFrame.addListener('select', carInfo => {
+		// 	this.#activeCarInfo = carInfo;
+		// 	this.#trackFrame.carText = carInfo.name;
+		// });
+		// this.#carFrame.addListener('selectTrack', () => this.#activeFrame = this.#trackFrame);
 
 		this.#gameFrame.addListener('pause', () => this.#activeFrame = this.#pauseFrame);
 		this.#gameFrame.addListener('end', win => {
@@ -63,9 +70,11 @@ class FrameManager extends GameEntity {
 		});
 
 		this.#pauseFrame.addListener('resume', () => this.#activeFrame = this.#gameFrame);
-		this.#pauseFrame.addListener('abandon', () => this.#activeFrame = this.#trackFrame);
+		// this.#pauseFrame.addListener('abandon', () => this.#activeFrame = this.#trackFrame);
+		this.#pauseFrame.addListener('abandon', () => this.#activeFrame = this.#trackAndCarFrame);
 
-		this.#endFrame.addListener('back', () => this.#activeFrame = this.#trackFrame);
+		// this.#endFrame.addListener('back', () => this.#activeFrame = this.#trackFrame);
+		this.#endFrame.addListener('back', () => this.#activeFrame = this.#trackAndCarFrame);
 	}
 
 	get uiOnly() {

@@ -9,13 +9,14 @@ class UiButton extends UiComponent {
 	#width;
 	#height;
 	#backColor;
+	#selected = false;
 	#disabled = false;
-	#state = UiButton.states.OFF;
+	#mouseState = UiButton.mouseState.OFF;
 
 	#text;
 	#rect;
 
-	static states = {
+	static mouseState = {
 		OFF: 0, HOVER: 1, CLICK: 2, PRESSED: 3,
 	};
 
@@ -35,12 +36,16 @@ class UiButton extends UiComponent {
 		this.#backColor = backColor;
 	}
 
+	set selected(selected) {
+		this.#selected = selected;
+	}
+
 	set disabled(disabled) {
 		this.#disabled = disabled;
 	}
 
 	get active() {
-		return this.#state !== UiButton.states.OFF;
+		return this.#mouseState !== UiButton.mouseState.OFF;
 	}
 
 	set enlarge(enlarge) {
@@ -51,22 +56,29 @@ class UiButton extends UiComponent {
 	update() {
 		super.update();
 
-		if (UiComponent.mouseIn(this.input, this.#centerX - this.#width / 2, this.#top, this.#width, this.#height))
-			if (this.input.getMouseState(0) === Input.states.PRESSED && !this.#disabled)
-				this.#state = UiButton.states.CLICK;
-			else if (this.input.getMouseState(0) === Input.states.DOWN && !this.#disabled)
-				this.#state = UiButton.states.PRESSED;
-			else
-				this.#state = UiButton.states.HOVER;
+		if (!UiComponent.mouseIn(this.input, this.#centerX - this.#width / 2, this.#top, this.#width, this.#height))
+			this.#mouseState = UiButton.mouseState.OFF;
+		else if (this.#disabled)
+			this.#mouseState = UiButton.mouseState.HOVER;
+		else if (this.input.getMouseState(0) === Input.states.PRESSED)
+			this.#mouseState = UiButton.mouseState.CLICK;
+		else if (this.input.getMouseState(0) === Input.states.DOWN)
+			this.#mouseState = UiButton.mouseState.PRESSED;
 		else
-			this.#state = UiButton.states.OFF;
+			this.#mouseState = UiButton.mouseState.HOVER;
 
-		this.#rect.fillColor = this.#disabled ? '#333' : [this.#backColor, '#ad2d2d', '#aaa', '#aaa'][this.#state];
-		this.enlarge = this.#state === UiButton.states.OFF ? 0 : .03;
+		if (this.#disabled)
+			this.#rect.fillColor = '#333';
+		else if (this.#selected)
+			this.#rect.fillColor = '#ad2d2d';
+		else
+			this.#rect.fillColor = [this.#backColor, '#ad2d2d', '#aaa', '#aaa'][this.#mouseState];
+
+		this.enlarge = this.active ? .03 : 0;
 
 		this.#text.color = this.#disabled ? '#999' : '#fff';
 
-		if (this.#state === UiButton.states.CLICK)
+		if (this.#mouseState === UiButton.mouseState.CLICK)
 			this.emit('click');
 	}
 }

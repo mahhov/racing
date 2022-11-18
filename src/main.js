@@ -8,3 +8,4 @@ new Loop();
 //  update particles and car model and track decorations and tire marks
 //  update car variations
 //  check if it's fun
+//  add sound effects, music, menu sound effects
